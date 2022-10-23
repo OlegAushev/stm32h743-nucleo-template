@@ -15,6 +15,8 @@
 #include "mcu_stm32h7/system/mcu_system.h"
 #include "mcu_stm32h7/gpio/mcu_gpio.h"
 
+#include "bsp_h743_nucleo/leds/leds.h"
+
 
 /**
  * @brief 
@@ -28,11 +30,25 @@ int main()
 	HAL_Delay(500);
 	mcu::gpio::enableClocks();
 
-	int i = 0;
+	bsp::initLedGreen();
+	bsp::initLedBlue();
+	bsp::initLedRed();
+
 	while (true)
 	{
-		HAL_Delay(1000);
-		++i;
+		bsp::ledGreen.set();
+		mcu::delay_ms(500);
+		bsp::ledBlue.set();
+		mcu::delay_ms(500);
+		bsp::ledRed.set();
+		mcu::delay_ms(500);
+
+		bsp::ledGreen.reset();
+		mcu::delay_ms(500);
+		bsp::ledBlue.reset();
+		mcu::delay_ms(500);
+		bsp::ledRed.reset();
+		mcu::delay_ms(500);
 	}
 }
 
