@@ -1,0 +1,11 @@
+{
+	"files.associations": {
+		"stm32h7xx_ll_utils.h": "c",
+		"stm32h7xx.h": "c",
+		"stm32h7xx_hal.h": "c"
+	},
+	"[Log]": {
+		"editor.fontSize": 12
+	},
+	"terminal.integrated.fontSize": 12,
+}
