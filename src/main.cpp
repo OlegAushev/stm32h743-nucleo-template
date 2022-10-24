@@ -19,6 +19,7 @@
 
 #include "bsp_h743_nucleo/bsp_h743_nucleo_def.h"
 #include "bsp_h743_nucleo/leds/leds.h"
+#include "bsp_h743_nucleo/button/button.h"
 
 #include "cli/cli_server.h"
 #include "cli/shell/cli_shell.h"
@@ -74,6 +75,9 @@ int main()
 	bsp::initLedGreen();
 	bsp::initLedBlue();
 	bsp::initLedRed();
+	bsp::initButtonUser();
+	bsp::buttonUser.initInterrupt(bsp::onButtonUserInterrupt, mcu::InterruptPriority(2));
+	bsp::buttonUser.enableInterrupts();
 
 	cli::print_blocking("done");
 
@@ -95,6 +99,21 @@ int main()
 
 
 
+/**
+ * @brief 
+ * 
+ */
+void bsp::onButtonUserInterrupt()
+{
+	if (bsp::buttonUser.read() == emb::PinState::ACTIVE)
+	{
+		bsp::ledBlue.set();
+	}
+	else
+	{
+		bsp::ledBlue.reset();
+	}
+}
 
 
 
