@@ -37,7 +37,7 @@ int main()
 	/* HAL, CLOCKS */
 	HAL_Init();
 	mcu::initDeviceClock();
-	HAL_Delay(500);
+	mcu::delay_ms(500);
 	mcu::gpio::enableClocks();
 
 	/* UART */
@@ -75,6 +75,19 @@ int main()
 	bsp::initLedGreen();
 	bsp::initLedBlue();
 	bsp::initLedRed();
+	for (auto i = 0; i < 4; ++i)
+	{
+		bsp::ledGreen.set();
+		mcu::delay_ms(50);
+		bsp::ledGreen.reset();
+		bsp::ledBlue.set();
+		mcu::delay_ms(50);
+		bsp::ledBlue.reset();
+		bsp::ledRed.set();
+		mcu::delay_ms(50);
+		bsp::ledRed.reset();		
+	}
+
 	bsp::initButtonUser();
 	bsp::buttonUser.initInterrupt(bsp::onButtonUserInterrupt, mcu::InterruptPriority(2));
 	bsp::buttonUser.enableInterrupts();
@@ -92,6 +105,7 @@ int main()
 	/* INFINITE LOOP */
 	while (true)
 	{
+		mcu::SystemClock::runTasks();
 		cliServer.run();
 	}
 }
@@ -111,7 +125,7 @@ void bsp::onButtonUserInterrupt()
 	}
 	else
 	{
-		bsp::ledBlue.reset();
+		mcu::resetDevice();
 	}
 }
 
