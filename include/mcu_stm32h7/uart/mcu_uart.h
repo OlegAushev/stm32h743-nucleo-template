@@ -71,7 +71,7 @@ public:
 	 * @param txPinCfg 
 	 * @param cfg 
 	 */
-	Uart(const RxPinConfig& rxPinCfg, TxPinConfig txPinCfg, const Config& cfg)
+	Uart(const RxPinConfig& rxPinCfg, const TxPinConfig& txPinCfg, const Config& cfg)
 	{
 		static_assert(Module >= 1 && Module <= 8);
 
