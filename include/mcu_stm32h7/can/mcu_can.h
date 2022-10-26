@@ -90,21 +90,27 @@ public:
 
 		static_assert(Module == 1 || Module == 2);
 
-		rxPin.init({	.port = rxPinCfg.port,
-				.pin = {.Pin = rxPinCfg.pin,
-					.Mode = GPIO_MODE_AF_PP,
-					.Pull = GPIO_PULLUP,
-					.Speed = GPIO_SPEED_FREQ_HIGH,
-					.Alternate = rxPinCfg.afSelection},
-				.activeState = emb::PinActiveState::HIGH});
+		rxPin.init({
+			.port = rxPinCfg.port,
+			.pin = {
+				.Pin = rxPinCfg.pin,
+				.Mode = GPIO_MODE_AF_PP,
+				.Pull = GPIO_PULLUP,
+				.Speed = GPIO_SPEED_FREQ_HIGH,
+				.Alternate = rxPinCfg.afSelection
+			},
+			.activeState = emb::PinActiveState::HIGH});
 
-		txPin.init({	.port = txPinCfg.port,
-				.pin = {.Pin = txPinCfg.pin,
-					.Mode = GPIO_MODE_AF_PP,
-					.Pull = GPIO_PULLUP,
-					.Speed = GPIO_SPEED_FREQ_HIGH,
-					.Alternate = txPinCfg.afSelection},
-				.activeState = emb::PinActiveState::HIGH});
+		txPin.init({
+			.port = txPinCfg.port,
+			.pin = {
+				.Pin = txPinCfg.pin,
+				.Mode = GPIO_MODE_AF_PP,
+				.Pull = GPIO_PULLUP,
+				.Speed = GPIO_SPEED_FREQ_HIGH,
+				.Alternate = txPinCfg.afSelection
+			},
+			.activeState = emb::PinActiveState::HIGH});
 
 		if constexpr (Module == 1)	{ m_handle.Instance = FDCAN1; }
 		else if constexpr (Module == 2) { m_handle.Instance = FDCAN2; }

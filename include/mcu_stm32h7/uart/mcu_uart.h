@@ -75,21 +75,27 @@ public:
 	{
 		static_assert(Module >= 1 && Module <= 8);
 
-		rxPin.init({	.port = rxPinCfg.port, 
-				.pin = {.Pin = rxPinCfg.pin,
-					.Mode = GPIO_MODE_AF_PP,
-					.Pull = GPIO_PULLUP,
-					.Speed = GPIO_SPEED_FREQ_HIGH,
-					.Alternate = rxPinCfg.afSelection},
-				.activeState = emb::PinActiveState::HIGH});
+		rxPin.init({
+			.port = rxPinCfg.port, 
+			.pin = {
+				.Pin = rxPinCfg.pin,
+				.Mode = GPIO_MODE_AF_PP,
+				.Pull = GPIO_PULLUP,
+				.Speed = GPIO_SPEED_FREQ_HIGH,
+				.Alternate = rxPinCfg.afSelection
+			},
+			.activeState = emb::PinActiveState::HIGH});
 				
-		txPin.init({	.port = txPinCfg.port,
-				.pin = {.Pin = txPinCfg.pin,
-					.Mode = GPIO_MODE_AF_PP,
-					.Pull = GPIO_PULLUP,
-					.Speed = GPIO_SPEED_FREQ_HIGH,
-					.Alternate = txPinCfg.afSelection},
-				.activeState = emb::PinActiveState::HIGH});
+		txPin.init({
+			.port = txPinCfg.port,
+			.pin = {
+				.Pin = txPinCfg.pin,
+				.Mode = GPIO_MODE_AF_PP,
+				.Pull = GPIO_PULLUP,
+				.Speed = GPIO_SPEED_FREQ_HIGH,
+				.Alternate = txPinCfg.afSelection
+			},
+			.activeState = emb::PinActiveState::HIGH});
 
 		if constexpr (Module == 1)	{ __HAL_RCC_USART1_CLK_ENABLE(); m_handle.Instance = USART1; }
 		else if constexpr (Module == 2)	{ __HAL_RCC_USART2_CLK_ENABLE(); m_handle.Instance = USART2; }
