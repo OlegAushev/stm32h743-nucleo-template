@@ -22,6 +22,7 @@
 #include "bsp_h743_nucleo/leds/leds.h"
 #include "bsp_h743_nucleo/button/button.h"
 
+#include "settings/settings.h"
 #include "cli/cli_server.h"
 #include "cli/shell/cli_shell.h"
 
@@ -41,19 +42,15 @@ int main()
 	mcu::delay_ms(500);
 	mcu::gpio::enableClocks();
 
+	/* SETTINGS */
+	Settings::init();
+	Settings settings;
+
 	/* UART */
-	mcu::uart::RxPinConfig uart2RxPinConfig = {.port = CN9_USART_B_RX_PORT, .pin = CN9_USART_B_RX_PIN, .afSelection = CN9_USART_B_RX_AF};
-	mcu::uart::TxPinConfig uart2TxPinConfig = {.port = CN9_USART_B_TX_PORT, .pin = CN9_USART_B_TX_PIN, .afSelection = CN9_USART_B_TX_AF};
-	mcu::uart::Config uart2Config = {.init = {	
-						.BaudRate = 9600,
-						.WordLength = UART_WORDLENGTH_8B,
-						.StopBits = UART_STOPBITS_1,
-						.Parity = UART_PARITY_NONE,
-						.Mode = UART_MODE_TX_RX,
-						.HwFlowCtl = UART_HWCONTROL_NONE},
-					.advanced = {
-						.AdvFeatureInit = UART_ADVFEATURE_NO_INIT}};
-	mcu::uart::Uart<2> uart2(uart2RxPinConfig, uart2TxPinConfig, uart2Config);
+	mcu::uart::Uart<2> uart2(
+			settings.mcu.UART2_RX_PIN_CONFIG,
+			settings.mcu.UART2_TX_PIN_CONFIG,
+			settings.mcu.UART2_CONFIG);
 
 	/* CLI */
 	cli::Server cliServer("stm32-nucleo", &uart2, nullptr, nullptr);
@@ -107,33 +104,12 @@ int main()
 	cli::nextline_blocking();
 	cli::print_blocking("configure CAN1 module... ");
 
-	mcu::can::RxPinConfig can1RxPinConfig = {.port = CN9_CAN_RX_PORT, .pin = CN9_CAN_RX_PIN, .afSelection = CN9_CAN_RX_AF};
-	mcu::can::TxPinConfig can1TxPinConfig = {.port = CN9_CAN_TX_PORT, .pin = CN9_CAN_TX_PIN, .afSelection = CN9_CAN_TX_AF};
-	mcu::can::Config can1Config{.init = {
-		.FrameFormat = FDCAN_FRAME_CLASSIC,
-		.Mode = FDCAN_MODE_EXTERNAL_LOOPBACK,//FDCAN_MODE_NORMAL,
-		.AutoRetransmission = ENABLE,
-		.TransmitPause = DISABLE,
-		.ProtocolException = ENABLE,
-		.NominalPrescaler = 25,
-		.NominalSyncJumpWidth = 1,
-		.NominalTimeSeg1 = 13, /* NominalTimeSeg1 = Propagation_segment + Phase_segment_1 */
-		.NominalTimeSeg2 = 2,
-		.MessageRAMOffset = 0,
-		.StdFiltersNbr = 0,
-		.ExtFiltersNbr = 0,
-		.RxFifo0ElmtsNbr = 1,
-		.RxFifo0ElmtSize = FDCAN_DATA_BYTES_8,
-		.RxFifo1ElmtsNbr = 0,
-		.RxBuffersNbr = 0,
-		.TxEventsNbr = 0,
-		.TxBuffersNbr = 0,
-		.TxFifoQueueElmtsNbr = 1,
-		.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION,
-		.TxElmtSize = FDCAN_DATA_BYTES_8,				
-	}};
 	std::vector<FDCAN_FilterTypeDef> can1RxFilters;
-	mcu::can::Can<1> can1(can1RxPinConfig, can1TxPinConfig, can1Config, can1RxFilters);
+	mcu::can::Can<1> can1(
+			settings.mcu.CAN1_RX_PIN_CONFIG,
+			settings.mcu.CAN1_TX_PIN_CONFIG,
+			settings.mcu.CAN1_CONFIG,
+			can1RxFilters);
 
 	FDCAN_TxHeaderTypeDef TxHeader;
 	uint8_t TxData[8];
