@@ -59,8 +59,8 @@ class Uart : public emb::IUart, private emb::noncopyable
 {
 private:
 	UART_HandleTypeDef m_handle;
-	mcu::gpio::Input rxPin;
-	mcu::gpio::Output txPin;
+	mcu::gpio::Input m_rxPin;
+	mcu::gpio::Output m_txPin;
 
 	static constexpr uint32_t TIMEOUT_ms = 1000;
 public:
@@ -75,7 +75,7 @@ public:
 	{
 		static_assert(Module >= 1 && Module <= 8);
 
-		rxPin.init({
+		m_rxPin.init({
 			.port = rxPinCfg.port, 
 			.pin = {
 				.Pin = rxPinCfg.pin,
@@ -86,7 +86,7 @@ public:
 			},
 			.activeState = emb::PinActiveState::HIGH});
 				
-		txPin.init({
+		m_txPin.init({
 			.port = txPinCfg.port,
 			.pin = {
 				.Pin = txPinCfg.pin,

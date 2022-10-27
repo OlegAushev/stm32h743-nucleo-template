@@ -32,6 +32,9 @@ namespace mcu {
 namespace can {
 
 
+constexpr bool STRICT_ERROR_CONTROL = true;
+
+
 struct RxPinConfig
 {
 	GPIO_TypeDef* port;
@@ -82,8 +85,10 @@ class Can : public CanBase, private emb::noncopyable
 {
 private:
 	FDCAN_HandleTypeDef m_handle;
-	mcu::gpio::Input rxPin;
-	mcu::gpio::Output txPin;
+	mcu::gpio::Input m_rxPin;
+	mcu::gpio::Output m_txPin;
+
+	uint64_t m_txErrorCounter{0};
 public:
 	static constexpr std::array<uint32_t, 9> DATA_LENGTH_CODES = {	FDCAN_DLC_BYTES_0,
 									FDCAN_DLC_BYTES_1,
@@ -109,7 +114,7 @@ public:
 
 		static_assert(Module == 1 || Module == 2);
 
-		rxPin.init({
+		m_rxPin.init({
 			.port = rxPinCfg.port,
 			.pin = {
 				.Pin = rxPinCfg.pin,
@@ -120,7 +125,7 @@ public:
 			},
 			.activeState = emb::PinActiveState::HIGH});
 
-		txPin.init({
+		m_txPin.init({
 			.port = txPinCfg.port,
 			.pin = {
 				.Pin = txPinCfg.pin,
@@ -196,8 +201,30 @@ public:
 		};
 		if (HAL_FDCAN_AddMessageToTxFifoQ(&m_handle, &header, frame.data.data()) != HAL_OK)
 		{
-			emb::fatal_error("CAN tx error");
+			++m_txErrorCounter;
+			if constexpr (STRICT_ERROR_CONTROL)
+			{
+				emb::fatal_error("CAN tx error");
+			}
 		}
+	}
+
+	/**
+	 * @brief 
+	 * 
+	 * @param header 
+	 * @param data 
+	 */
+	void send(FDCAN_TxHeaderTypeDef& header, std::array<uint8_t, 8>& data)
+	{
+		if (HAL_FDCAN_AddMessageToTxFifoQ(&m_handle, &header, data.data()) != HAL_OK)
+		{
+			++m_txErrorCounter;
+			if constexpr (STRICT_ERROR_CONTROL)
+			{
+				emb::fatal_error("CAN tx error");
+			}
+		}		
 	}
 };
 
