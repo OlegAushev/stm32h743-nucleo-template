@@ -85,6 +85,48 @@ public:
 };
 
 
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ */
+template <class T>
+class irq_singleton
+{
+private:
+	static T* s_instance;
+	static bool s_initialized;
+protected:
+	irq_singleton(T* self)
+	{
+		assert(!s_initialized);
+		if (s_initialized) while (1) {}
+		s_instance = self;
+		s_initialized = true;
+	}
+public:
+	static T* instance()
+	{
+		assert(s_initialized);
+		if (!s_initialized) while (1) {}
+		return s_instance;
+	}
+
+	static bool initialized() { return s_initialized; }
+
+	virtual ~irq_singleton()
+	{
+		s_initialized = false;
+		s_instance = static_cast<T*>(NULL);
+	}
+};
+
+template <class T>
+T* irq_singleton<T>::s_instance = static_cast<T*>(NULL);
+template <class T>
+bool irq_singleton<T>::s_initialized = false;
+
+
 } // namespace emb
 
 

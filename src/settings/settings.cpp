@@ -61,9 +61,9 @@ const mcu::can::Config Settings::Mcu::CAN1_CONFIG = {
 		.NominalTimeSeg1 = 13, /* NominalTimeSeg1 = Propagation_segment + Phase_segment_1 */
 		.NominalTimeSeg2 = 2,
 		.MessageRAMOffset = 0,
-		.StdFiltersNbr = 0,
+		.StdFiltersNbr = 1,
 		.ExtFiltersNbr = 0,
-		.RxFifo0ElmtsNbr = 1,
+		.RxFifo0ElmtsNbr = 8,
 		.RxFifo0ElmtSize = FDCAN_DATA_BYTES_8,
 		.RxFifo1ElmtsNbr = 0,
 		.RxBuffersNbr = 0,

@@ -29,6 +29,9 @@
 #include "build/generated/git_version.h"
 
 
+void testCanRx(FDCAN_HandleTypeDef*, uint32_t);
+
+
 /**
  * @brief 
  * 
@@ -110,7 +113,8 @@ int main()
 			settings.mcu.CAN1_TX_PIN_CONFIG,
 			settings.mcu.CAN1_CONFIG,
 			can1RxFilters);
-	
+	can1.initRxInterrupt(testCanRx, mcu::InterruptPriority(3));
+
 	cli::print_blocking("done");
 	
 
@@ -120,8 +124,8 @@ int main()
 		mcu::SystemClock::runTasks();
 		cliServer.run();
 
-		can1.send({.id = 0x42, .len = 3, .data = {0x10, 0xAD, 0XED}});
-		HAL_Delay(10);
+		//can1.send({.id = 0x42, .len = 3, .data = {0x10, 0xAD, 0XED}});
+		//HAL_Delay(10);
 	}
 }
 
@@ -164,4 +168,14 @@ void emb::fatal_error_cb(const char* hint, int code)
 
 
 
+
+void testCanRx(FDCAN_HandleTypeDef* handle, uint32_t RxFifo0ITs)
+{
+	bsp::ledGreen.toggle();
+}
+
+void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
+{
+	bsp::ledGreen.toggle();
+}
 

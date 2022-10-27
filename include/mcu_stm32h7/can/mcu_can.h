@@ -18,6 +18,7 @@
 
 
 #include <vector>
+#include <functional>
 #include "emb/emb_core.h"
 #include "emb/emb_interfaces/emb_can.h"
 
@@ -33,6 +34,15 @@ namespace can {
 
 
 constexpr bool STRICT_ERROR_CONTROL = true;
+
+
+namespace detail {
+
+
+extern std::array<FDCAN_HandleTypeDef*, 2> irqHandles;
+
+
+}
 
 
 struct RxPinConfig
@@ -81,7 +91,7 @@ protected:
  * @tparam Module 
  */
 template <unsigned int Module>
-class Can : public CanBase, private emb::noncopyable
+class Can : public CanBase, private emb::noncopyable, public emb::irq_singleton<Can<Module>>
 {
 private:
 	FDCAN_HandleTypeDef m_handle;
@@ -110,6 +120,7 @@ public:
 	 */
 	Can(const RxPinConfig& rxPinCfg, const TxPinConfig& txPinCfg, const Config& cfg,
 		std::vector<FDCAN_FilterTypeDef>& rxFilters)
+		: emb::irq_singleton<Can<Module>>(this)
 	{
 
 		static_assert(Module == 1 || Module == 2);
@@ -140,6 +151,9 @@ public:
 		else if constexpr (Module == 2) { m_handle.Instance = FDCAN2; }
 		else { fatal_error("invalid CAN module"); }
 
+		// Register handle
+		detail::irqHandles[Module-1] = &m_handle;
+
 		enableClock();
 
 		/* Initialize FDCAN */
@@ -150,17 +164,34 @@ public:
 		}
 
 		/* Configure Rx filters */
-		assert_param(rxFilters.size() == (cfg.init.StdFiltersNbr + cfg.init.ExtFiltersNbr));
+
+
+		/* Configure Rx filter */
+		/*FDCAN_FilterTypeDef sFilterConfig;
+		sFilterConfig.IdType = FDCAN_STANDARD_ID;
+		sFilterConfig.FilterIndex = 0;
+		sFilterConfig.FilterType = FDCAN_FILTER_MASK;
+		sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
+		sFilterConfig.FilterID1 = 0x321;
+		sFilterConfig.FilterID2 = 0x7FF;
+		if (HAL_FDCAN_ConfigFilter(&m_handle, &sFilterConfig) != HAL_OK)
+		{
+			fatal_error("CAN module Rx filter configuration failed");
+		}*/
+
+
+
+		/*assert_param(rxFilters.size() == (cfg.init.StdFiltersNbr + cfg.init.ExtFiltersNbr));
 		for (auto& filter : rxFilters)
 		{
 			if (HAL_FDCAN_ConfigFilter(&m_handle, &filter) != HAL_OK)
 			{
 				fatal_error("CAN module Rx filter configuration failed");
 			}
-		}
+		}*/
 
 		/* Configure global filter to reject all non-matching frames */
-		//HAL_FDCAN_ConfigGlobalFilter(&m_handle, FDCAN_REJECT, FDCAN_REJECT, FDCAN_REJECT_REMOTE, FDCAN_REJECT_REMOTE);
+		//HAL_FDCAN_ConfigGlobalFilter(&m_handle, FDCAN_ACCEPT_IN_RX_FIFO0, FDCAN_ACCEPT_IN_RX_FIFO0, FDCAN_REJECT_REMOTE, FDCAN_REJECT_REMOTE);
 
 		/* Start the FDCAN module */
 		if (HAL_FDCAN_Start(&m_handle) != HAL_OK)
@@ -225,6 +256,17 @@ public:
 				emb::fatal_error("CAN tx error");
 			}
 		}		
+	}
+
+
+	void initRxInterrupt(void (*handler)(FDCAN_HandleTypeDef*, uint32_t RxFifo0ITs), InterruptPriority priority)
+	{
+		if (HAL_FDCAN_ActivateNotification(&m_handle, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
+		{
+			emb::fatal_error("CAN interrupt initialization failed");
+		}
+		HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, 0, 1);
+		HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);
 	}
 };
 
