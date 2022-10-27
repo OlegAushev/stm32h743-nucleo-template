@@ -19,6 +19,7 @@
 
 #include <vector>
 #include "emb/emb_core.h"
+#include "emb/emb_interfaces/emb_can.h"
 
 #include "../mcu_def.h"
 #include "../system/mcu_system.h"
@@ -77,13 +78,31 @@ protected:
  * @tparam Module 
  */
 template <unsigned int Module>
-class Can : public CanBase, private emb::NonCopyable
+class Can : public CanBase, private emb::noncopyable
 {
 private:
 	FDCAN_HandleTypeDef m_handle;
 	mcu::gpio::Input rxPin;
 	mcu::gpio::Output txPin;
 public:
+	static constexpr std::array<uint32_t, 9> DATA_LENGTH_CODES = {	FDCAN_DLC_BYTES_0,
+									FDCAN_DLC_BYTES_1,
+									FDCAN_DLC_BYTES_2,
+									FDCAN_DLC_BYTES_3,
+									FDCAN_DLC_BYTES_4,
+									FDCAN_DLC_BYTES_5,
+									FDCAN_DLC_BYTES_6,
+									FDCAN_DLC_BYTES_7,
+									FDCAN_DLC_BYTES_8};
+public:
+	/**
+	 * @brief Construct a new Can object
+	 * 
+	 * @param rxPinCfg 
+	 * @param txPinCfg 
+	 * @param cfg 
+	 * @param rxFilters 
+	 */
 	Can(const RxPinConfig& rxPinCfg, const TxPinConfig& txPinCfg, const Config& cfg,
 		std::vector<FDCAN_FilterTypeDef>& rxFilters)
 	{
@@ -118,6 +137,7 @@ public:
 
 		enableClock();
 
+		/* Initialize FDCAN */
 		m_handle.Init = cfg.init;
 		if (HAL_FDCAN_Init(&m_handle) != HAL_OK)
 		{
@@ -149,7 +169,36 @@ public:
 		//}
 	}
 
+	/**
+	 * @brief Returns HAL handle.
+	 * 
+	 * @return FDCAN_HandleTypeDef& 
+	 */
 	FDCAN_HandleTypeDef& handle() { return m_handle; }
+
+	/**
+	 * @brief 
+	 * 
+	 * @param frame 
+	 */
+	void send(can_frame frame)
+	{
+		FDCAN_TxHeaderTypeDef header = {
+			.Identifier = frame.id,
+			.IdType = FDCAN_STANDARD_ID,
+			.TxFrameType = FDCAN_DATA_FRAME,
+			.DataLength = DATA_LENGTH_CODES[frame.len],
+			.ErrorStateIndicator = FDCAN_ESI_ACTIVE,
+			.BitRateSwitch = FDCAN_BRS_OFF,
+			.FDFormat = FDCAN_CLASSIC_CAN,
+			.TxEventFifoControl = FDCAN_NO_TX_EVENTS,
+			.MessageMarker = 0
+		};
+		if (HAL_FDCAN_AddMessageToTxFifoQ(&m_handle, &header, frame.data.data()) != HAL_OK)
+		{
+			emb::fatal_error("CAN tx error");
+		}
+	}
 };
 
 

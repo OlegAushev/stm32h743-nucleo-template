@@ -47,13 +47,13 @@ void fatal_error_cb(const char* hint, int code);
  * @brief 
  * 
  */
-class NonCopyable
+class noncopyable
 {
 public:
-	NonCopyable() = default;
-	NonCopyable(const NonCopyable& other) = delete;
-	NonCopyable& operator=(const NonCopyable& other) = delete;
-	virtual ~NonCopyable() = default;
+	noncopyable() = default;
+	noncopyable(const noncopyable& other) = delete;
+	noncopyable& operator=(const noncopyable& other) = delete;
+	virtual ~noncopyable() = default;
 };
 
 
@@ -63,18 +63,18 @@ public:
  * @tparam T 
  */
 template <class T>
-class Monostate
+class monostate
 {
 private:
 	static inline bool s_initialized {false};
 protected:
-	Monostate()
+	monostate()
 	{
 		assert(s_initialized);
 		if (!s_initialized) { fatal_error("uninitialized monostate class"); }
 	}
 
-	static void setInitialized()
+	static void set_initialized()
 	{
 		assert(!s_initialized);
 		if (s_initialized) { fatal_error("repeated initialization of monostate class"); }

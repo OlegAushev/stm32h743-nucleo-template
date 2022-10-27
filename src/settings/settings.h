@@ -17,12 +17,12 @@
 #include "bsp_h743_nucleo/bsp_h743_nucleo_def.h"
 
 
-class Settings : public emb::Monostate<Settings>
+class Settings : public emb::monostate<Settings>
 {
 public:
 	static void init()
 	{
-		setInitialized();
+		set_initialized();
 	}
 public:
 	struct Mcu

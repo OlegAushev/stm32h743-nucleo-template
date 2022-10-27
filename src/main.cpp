@@ -110,22 +110,6 @@ int main()
 			settings.mcu.CAN1_TX_PIN_CONFIG,
 			settings.mcu.CAN1_CONFIG,
 			can1RxFilters);
-
-	FDCAN_TxHeaderTypeDef TxHeader;
-	uint8_t TxData[8];
-	/* Prepare Tx Header */
-	TxHeader.Identifier = 0x321;
-	TxHeader.IdType = FDCAN_STANDARD_ID;
-	TxHeader.TxFrameType = FDCAN_DATA_FRAME;
-	TxHeader.DataLength = FDCAN_DLC_BYTES_2;
-	TxHeader.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
-	TxHeader.BitRateSwitch = FDCAN_BRS_OFF;
-	TxHeader.FDFormat = FDCAN_CLASSIC_CAN;
-	TxHeader.TxEventFifoControl = FDCAN_NO_TX_EVENTS;
-	TxHeader.MessageMarker = 0;
-
-	TxData[0] = 'H';
-	TxData[1] = 'i';
 	
 	cli::print_blocking("done");
 	
@@ -136,15 +120,8 @@ int main()
 		mcu::SystemClock::runTasks();
 		cliServer.run();
 
-
-		/* Start the Transmission process */
-		if (HAL_FDCAN_AddMessageToTxFifoQ(&can1.handle(), &TxHeader, TxData) != HAL_OK)
-		{
-			emb::fatal_error("CAN tx error");
-		}
+		can1.send({.id = 0x42, .len = 3, .data = {0x10, 0xAD, 0XED}});
 		HAL_Delay(10);
-
-
 	}
 }
 

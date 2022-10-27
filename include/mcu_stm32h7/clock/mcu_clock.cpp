@@ -40,7 +40,7 @@ void SystemClock::init()
 	m_delayedTaskDelay = 0;
 	m_delayedTask = emb::empty_function;
 	
-	setInitialized();
+	set_initialized();
 }
 
 
