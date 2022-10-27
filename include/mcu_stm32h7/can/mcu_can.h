@@ -36,15 +36,6 @@ namespace can {
 constexpr bool STRICT_ERROR_CONTROL = true;
 
 
-namespace detail {
-
-
-extern std::array<FDCAN_HandleTypeDef*, 2> irqHandles;
-
-
-}
-
-
 struct RxPinConfig
 {
 	GPIO_TypeDef* port;
@@ -93,6 +84,7 @@ protected:
 template <unsigned int Module>
 class Can : public CanBase, private emb::noncopyable, public emb::irq_singleton<Can<Module>>
 {
+	friend void ::HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef*, uint32_t);
 private:
 	FDCAN_HandleTypeDef m_handle;
 	mcu::gpio::Input m_rxPin;
@@ -150,9 +142,6 @@ public:
 		if constexpr (Module == 1)	{ m_handle.Instance = FDCAN1; }
 		else if constexpr (Module == 2) { m_handle.Instance = FDCAN2; }
 		else { fatal_error("invalid CAN module"); }
-
-		// Register handle
-		detail::irqHandles[Module-1] = &m_handle;
 
 		enableClock();
 
@@ -258,15 +247,44 @@ public:
 		}		
 	}
 
-
-	void initRxInterrupt(void (*handler)(FDCAN_HandleTypeDef*, uint32_t RxFifo0ITs), InterruptPriority priority)
+	/* INTERRUPTS */
+private:
+	static inline std::function<void(can_frame)> onFrameReceived;
+public:
+	/**
+	 * @brief 
+	 * 
+	 * @param t_onFrameReceived 
+	 * @param priority 
+	 */
+	void initRxInterrupt(std::function<void(can_frame)> t_onFrameReceived, InterruptPriority priority)
 	{
+		onFrameReceived = t_onFrameReceived;
+
 		if (HAL_FDCAN_ActivateNotification(&m_handle, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
 		{
 			emb::fatal_error("CAN interrupt initialization failed");
 		}
-		HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, 0, 1);
+		HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, priority.value(), 0);
 		HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);
+	}
+
+	/**
+	 * @brief Enables interrupts.
+	 * 
+	 */
+	void enableInterrupts()
+	{
+		HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);
+	}
+
+	/**
+	 * @brief Disables interrupts.
+	 * 
+	 */
+	void disableInterrupts()
+	{
+		HAL_NVIC_DisableIRQ(FDCAN1_IT0_IRQn);
 	}
 };
 

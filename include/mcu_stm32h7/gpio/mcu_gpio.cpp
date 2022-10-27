@@ -33,7 +33,7 @@ void mcu::gpio::enableClocks()
 }
 
 
-std::array<std::function<void(void)>, 16> mcu::gpio::Input::s_interruptHandlers = {
+std::array<std::function<void(void)>, 16> mcu::gpio::Input::onInterrupt = {
 	emb::invalid_function, emb::invalid_function, emb::invalid_function, emb::invalid_function,
 	emb::invalid_function, emb::invalid_function, emb::invalid_function, emb::invalid_function,
 	emb::invalid_function, emb::invalid_function, emb::invalid_function, emb::invalid_function,
@@ -47,10 +47,10 @@ std::array<std::function<void(void)>, 16> mcu::gpio::Input::s_interruptHandlers 
  * @param (none)
  * @return (none)
  */
-extern "C" void EXTI0_IRQHandler(void)
+extern "C" void EXTI0_IRQHandler()
 {
 	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_0);
-	mcu::gpio::Input::onInterrupt(0);
+	mcu::gpio::Input::onInterrupt[0]();
 }
 
 
@@ -60,10 +60,10 @@ extern "C" void EXTI0_IRQHandler(void)
  * @param (none)
  * @return (none)
  */
-extern "C" void EXTI1_IRQHandler(void)
+extern "C" void EXTI1_IRQHandler()
 {
 	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_1);
-	mcu::gpio::Input::onInterrupt(1);
+	mcu::gpio::Input::onInterrupt[1]();
 }
 
 
@@ -73,10 +73,10 @@ extern "C" void EXTI1_IRQHandler(void)
  * @param (none)
  * @return (none)
  */
-extern "C" void EXTI2_IRQHandler(void)
+extern "C" void EXTI2_IRQHandler()
 {
 	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_2);
-	mcu::gpio::Input::onInterrupt(2);
+	mcu::gpio::Input::onInterrupt[2]();
 }
 
 
@@ -86,10 +86,10 @@ extern "C" void EXTI2_IRQHandler(void)
  * @param (none)
  * @return (none)
  */
-extern "C" void EXTI3_IRQHandler(void)
+extern "C" void EXTI3_IRQHandler()
 {
 	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_3);
-	mcu::gpio::Input::onInterrupt(3);
+	mcu::gpio::Input::onInterrupt[3]();
 }
 
 
@@ -99,10 +99,10 @@ extern "C" void EXTI3_IRQHandler(void)
  * @param (none)
  * @return (none)
  */
-extern "C" void EXTI4_IRQHandler(void)
+extern "C" void EXTI4_IRQHandler()
 {
 	__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_4);
-	mcu::gpio::Input::onInterrupt(4);
+	mcu::gpio::Input::onInterrupt[4]();
 }
 
 
@@ -112,7 +112,7 @@ extern "C" void EXTI4_IRQHandler(void)
  * @param (none)
  * @return (none)
  */
-extern "C" void EXTI9_5_IRQHandler(void)
+extern "C" void EXTI9_5_IRQHandler()
 {
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_5);
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);
@@ -128,7 +128,7 @@ extern "C" void EXTI9_5_IRQHandler(void)
  * @param (none)
  * @return (none)
  */
-extern "C" void EXTI15_10_IRQHandler(void)
+extern "C" void EXTI15_10_IRQHandler()
 {
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_10);
 	HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
@@ -146,7 +146,9 @@ extern "C" void EXTI15_10_IRQHandler(void)
  */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	mcu::gpio::Input::onInterrupt(POSITION_VAL(GPIO_Pin));
+	size_t pinNo = POSITION_VAL(GPIO_Pin);
+	assert_param(pinNo <= 15);
+	mcu::gpio::Input::onInterrupt[pinNo]();
 }
 
 

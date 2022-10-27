@@ -29,9 +29,6 @@
 #include "build/generated/git_version.h"
 
 
-void testCanRx(FDCAN_HandleTypeDef*, uint32_t);
-
-
 /**
  * @brief 
  * 
@@ -90,7 +87,7 @@ int main()
 	}
 
 	bsp::initButtonUser();
-	bsp::buttonUser.initInterrupt(bsp::onButtonUserInterrupt, mcu::InterruptPriority(2));
+	bsp::buttonUser.initInterrupt(bsp::onButtonUserInterrupt, mcu::InterruptPriority(15));
 	bsp::buttonUser.enableInterrupts();
 
 	cli::print_blocking("done");
@@ -113,7 +110,14 @@ int main()
 			settings.mcu.CAN1_TX_PIN_CONFIG,
 			settings.mcu.CAN1_CONFIG,
 			can1RxFilters);
-	can1.initRxInterrupt(testCanRx, mcu::InterruptPriority(3));
+	
+	auto can1Loop = [&can1](can_frame frame)
+	{
+		can1.send(frame);
+		bsp::ledGreen.toggle();
+	};
+	can1.initRxInterrupt(can1Loop, mcu::InterruptPriority(10));
+	can1.enableInterrupts();
 
 	cli::print_blocking("done");
 	
@@ -168,14 +172,4 @@ void emb::fatal_error_cb(const char* hint, int code)
 
 
 
-
-void testCanRx(FDCAN_HandleTypeDef* handle, uint32_t RxFifo0ITs)
-{
-	bsp::ledGreen.toggle();
-}
-
-void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
-{
-	bsp::ledGreen.toggle();
-}
 

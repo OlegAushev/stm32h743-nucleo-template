@@ -25,6 +25,13 @@
 #include "../mcu_def.h"
 
 
+extern "C" void EXTI0_IRQHandler();
+extern "C" void EXTI1_IRQHandler();
+extern "C" void EXTI2_IRQHandler();
+extern "C" void EXTI3_IRQHandler();
+extern "C" void EXTI4_IRQHandler();
+
+
 namespace mcu {
 
 
@@ -84,6 +91,12 @@ public:
  */
 class Input : public emb::IGpioInput, public Gpio
 {
+	friend void ::EXTI0_IRQHandler();
+	friend void ::EXTI1_IRQHandler();
+	friend void ::EXTI2_IRQHandler();
+	friend void ::EXTI3_IRQHandler();
+	friend void ::EXTI4_IRQHandler();
+	friend void ::HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 public:
 	/**
 	 * @brief GPIO input pin default constructor.
@@ -126,8 +139,8 @@ public:
 	}
 
 private:
-	IRQn_Type m_irqn {NonMaskableInt_IRQn};	// use NonMaskableInt_IRQn as value for not initialized interrupt
-	static std::array<std::function<void(void)>, 16> s_interruptHandlers;
+	IRQn_Type m_irqn{NonMaskableInt_IRQn};	// use NonMaskableInt_IRQn as value for not initialized interrupt
+	static std::array<std::function<void(void)>, 16> onInterrupt;
 public:
 	/**
 	 * @brief Initializes interrupt.
@@ -165,7 +178,7 @@ public:
 			return;
 		}
 		HAL_NVIC_SetPriority(m_irqn, priority.value(), 0);
-		s_interruptHandlers[this->no()] = handler;
+		onInterrupt[this->no()] = handler;
 	}
 
 	/**
@@ -194,17 +207,6 @@ public:
 		{
 			HAL_NVIC_EnableIRQ(m_irqn);
 		}
-	}
-
-	/**
-	 * @brief Executes interrupt handler for specified pin.
-	 * 
-	 * @param pinNo Pin number
-	 */
-	static void onInterrupt(size_t pinNo)
-	{
-		assert_param(pinNo <= 15);
-		s_interruptHandlers[pinNo]();
 	}
 };
 
