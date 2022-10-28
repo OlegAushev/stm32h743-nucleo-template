@@ -36,23 +36,23 @@
  */
 int main()
 {
-	/* HAL, CLOCKS */
+	/* === HAL, CLOCKS === */
 	HAL_Init();
 	mcu::initDeviceClock();
 	mcu::delay_ms(500);
 	mcu::gpio::enableClocks();
 
-	/* SETTINGS */
+	/* === SETTINGS === */
 	Settings::init();
 	Settings settings;
 
-	/* UART */
+	/* === UART === */
 	mcu::uart::Uart<2> uart2(
 			settings.mcu.UART2_RX_PIN_CONFIG,
 			settings.mcu.UART2_TX_PIN_CONFIG,
 			settings.mcu.UART2_CONFIG);
 
-	/* CLI */
+	/* === CLI === */
 	cli::Server cliServer("stm32-nucleo", &uart2, nullptr, nullptr);
 	cli::Shell::init();
 	cliServer.registerExecCallback(cli::Shell::exec);
@@ -66,7 +66,7 @@ int main()
 	cli::print_blocking(GIT_DESCRIBE);
 	cli::print_blocking(CLI_COLOR_OFF);
 
-	/* BSP */
+	/* === BSP === */
 	cli::nextline_blocking();
 	cli::print_blocking("initialize bsp... ");
 
@@ -92,7 +92,7 @@ int main()
 
 	cli::print_blocking("done");
 
-	/* CLOCK */
+	/* === CLOCK === */
 	cli::nextline_blocking();
 	cli::print_blocking("configure system clock... ");
 
@@ -100,7 +100,7 @@ int main()
 
 	cli::print_blocking("done");
 
-	/* CAN1 */
+	/* === CAN1 === */
 	cli::nextline_blocking();
 	cli::print_blocking("configure CAN1 module... ");
 
@@ -122,14 +122,19 @@ int main()
 	cli::print_blocking("done");
 	
 
-	/* INFINITE LOOP */
+	/* === INFINITE LOOP === */
 	while (true)
 	{
 		mcu::SystemClock::runTasks();
 		cliServer.run();
-
-		//can1.send({.id = 0x42, .len = 3, .data = {0x10, 0xAD, 0XED}});
-		//HAL_Delay(10);
+		{
+			//mcu::gpio::LOG_DURATION(bsp::ledGreen, SET_RESET);
+			mcu::delay_ms(500);
+		}
+		{
+			//mcu::gpio::LOG_DURATION(bsp::ledBlue, TOGGLE);
+			mcu::delay_ms(1000);
+		}	
 	}
 }
 

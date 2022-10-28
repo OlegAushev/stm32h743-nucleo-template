@@ -81,7 +81,21 @@ public:
 	 * 
 	 * @return Pin number 
 	 */
-	uint32_t no() const { return POSITION_VAL(m_cfg.pin.Pin); }
+	uint32_t pinNo() const { return POSITION_VAL(m_cfg.pin.Pin); }
+
+	/**
+	 * @brief Returns pin bit.
+	 * 
+	 * @return uint32_t 
+	 */
+	uint32_t pinBit() const { return m_cfg.pin.Pin; }
+
+	/**
+	 * @brief Returns pin port.
+	 * 
+	 * @return GPIO_TypeDef* 
+	 */
+	GPIO_TypeDef* port() { return m_cfg.port; }
 };
 
 
@@ -178,7 +192,7 @@ public:
 			return;
 		}
 		HAL_NVIC_SetPriority(m_irqn, priority.value(), 0);
-		onInterrupt[this->no()] = handler;
+		onInterrupt[this->pinNo()] = handler;
 	}
 
 	/**
@@ -292,6 +306,70 @@ public:
 		HAL_GPIO_TogglePin(m_cfg.port, static_cast<uint16_t>(m_cfg.pin.Pin));
 	}
 };
+
+
+/*============================================================================*/
+/**
+ * @brief Duration logger via GPIO mode.
+ * 
+ */
+enum class DurationLoggerMode
+{
+	SET_RESET,
+	TOGGLE
+};
+
+
+/**
+ * @brief Duration logger via GPIO.
+ * 
+ * @tparam Mode 
+ */
+template <DurationLoggerMode Mode>
+class DurationLogger
+{
+private:
+	Output& m_output;
+public:
+	/**
+	 * @brief Construct a new Duration Logger object
+	 * 
+	 * @param gpioOutput 
+	 */
+	DurationLogger(Output& gpioOutput)
+		: m_output(gpioOutput)
+	{
+		if constexpr (Mode == DurationLoggerMode::SET_RESET)
+		{
+			HAL_GPIO_WritePin(m_output.port(), m_output.pinBit(), GPIO_PIN_SET);
+		}
+		else
+		{
+			HAL_GPIO_TogglePin(m_output.port(), m_output.pinBit());
+			HAL_GPIO_TogglePin(m_output.port(), m_output.pinBit());
+		}
+	}
+
+	/**
+	 * @brief Destroy the Duration Logger object
+	 * 
+	 */
+	~DurationLogger()
+	{
+		if constexpr (Mode == DurationLoggerMode::SET_RESET)
+		{
+			HAL_GPIO_WritePin(m_output.port(), m_output.pinBit(), GPIO_PIN_RESET);
+		}
+		else
+		{
+			HAL_GPIO_TogglePin(m_output.port(), m_output.pinBit());
+		}
+	}
+};
+
+
+#define LOG_DURATION(pin, x) DurationLogger<mcu::gpio::DurationLoggerMode::x> EMB_UNIQ_ID(__LINE__)(pin)
+
 
 
 } // namespace gpio
