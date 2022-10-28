@@ -98,7 +98,34 @@ public:
 	static void enter() { __disable_irq(); }
 	static void leave() { __enable_irq(); }
 };
-#define critical_section CriticalSection EMB_UNIQ_ID(__LINE__)
+
+
+/**
+ * @brief 
+ * 
+ */
+inline void enableICache() { SCB_EnableICache(); }
+
+
+/**
+ * @brief 
+ * 
+ */
+inline void disableICache() { SCB_DisableICache(); }
+
+
+/**
+ * @brief 
+ * 
+ */
+inline void enableDCache() { SCB_EnableDCache(); }
+
+
+/**
+ * @brief 
+ * 
+ */
+inline void disableDCache() { SCB_DisableDCache(); }
 
 
 /// @}

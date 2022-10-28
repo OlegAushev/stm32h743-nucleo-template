@@ -38,6 +38,8 @@ int main()
 {
 	/* === HAL, CLOCKS === */
 	HAL_Init();
+	mcu::enableICache();
+	mcu::enableDCache();
 	mcu::initDeviceClock();
 	mcu::delay_ms(500);
 	mcu::gpio::enableClocks();
