@@ -10,6 +10,7 @@
  */
 
 
+#include "emb/emb_math.h"
 #include "stm32h7xx.h"
 
 #include "mcu_stm32h7/system/mcu_system.h"
@@ -145,7 +146,7 @@ int main()
 	while (true)
 	{
 		mcu::SystemClock::runTasks();
-		cliServer.run();	
+		cliServer.run();
 	}
 }
 

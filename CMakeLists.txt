@@ -33,6 +33,7 @@ set(stm32cubemx_incdirs
 	${PROJECT_SOURCE_DIR}/drivers/${mcu_family}_HAL_Driver/Inc/Legacy
 	${PROJECT_SOURCE_DIR}/drivers/CMSIS/Device/ST/${mcu_family}/Include
 	${PROJECT_SOURCE_DIR}/drivers/CMSIS/Include
+	${PROJECT_SOURCE_DIR}/drivers/CMSIS/DSP/Include
 	${PROJECT_SOURCE_DIR}/drivers/BSP/Components
 	${PROJECT_SOURCE_DIR}/drivers/BSP/${mcu_devboard}
 )
@@ -106,6 +107,11 @@ target_compile_options(${executable} PRIVATE
 	$<$<CONFIG:Release>:-O3 -g0>
 )
 
+target_compile_features(${executable} PRIVATE
+	c_std_11
+	cxx_std_20
+)
+
 ################################################################################
 # Linker Options
 target_link_options(${executable} PRIVATE
@@ -122,9 +128,12 @@ target_link_options(${executable} PRIVATE
 	-u_printf_float			# allows to use printf with float
 )
 
-target_compile_features(${executable} PRIVATE
-	c_std_11
-	cxx_std_20
+target_link_directories(${executable} PRIVATE
+	${PROJECT_SOURCE_DIR}/drivers/CMSIS/DSP/Lib/GCC
+)
+
+target_link_libraries(${executable}
+	libarm_cortexM7lfsp_math.a
 )
 
 ################################################################################
