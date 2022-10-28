@@ -17,13 +17,17 @@ namespace bsp {
 
 
 mcu::gpio::Input buttonUser;
-const mcu::gpio::Config buttonUserConfig = {	.port = GPIOC,
-						.pin = {.Pin = GPIO_PIN_13,
-							.Mode = GPIO_MODE_IT_RISING_FALLING,
-							.Pull = GPIO_NOPULL,
-							.Speed = GPIO_SPEED_FREQ_LOW,
-							.Alternate = 0},
-						.activeState = emb::PinActiveState::HIGH};
+const mcu::gpio::Config buttonUserConfig = {
+	.port = GPIOC,
+	.pin = {
+		.Pin = GPIO_PIN_13,
+		.Mode = GPIO_MODE_IT_RISING_FALLING,
+		.Pull = GPIO_NOPULL,
+		.Speed = GPIO_SPEED_FREQ_LOW,
+		.Alternate = 0
+	},
+	.activeState = emb::PinActiveState::HIGH
+};
 
 
 void initButtonUser()

@@ -42,15 +42,18 @@ int main()
 	mcu::delay_ms(500);
 	mcu::gpio::enableClocks();
 
+
 	/* === SETTINGS === */
 	Settings::init();
 	Settings settings;
+
 
 	/* === UART === */
 	mcu::uart::Uart<2> uart2(
 			settings.mcu.UART2_RX_PIN_CONFIG,
 			settings.mcu.UART2_TX_PIN_CONFIG,
 			settings.mcu.UART2_CONFIG);
+
 
 	/* === CLI === */
 	cli::Server cliServer("stm32-nucleo", &uart2, nullptr, nullptr);
@@ -65,6 +68,7 @@ int main()
 	cli::print_blocking("stm32h743-nucleo-template | ");
 	cli::print_blocking(GIT_DESCRIBE);
 	cli::print_blocking(CLI_COLOR_OFF);
+
 
 	/* === BSP === */
 	cli::nextline_blocking();
@@ -92,6 +96,18 @@ int main()
 
 	cli::print_blocking("done");
 
+
+	/* === GPIO PROFILER === */
+	cli::nextline_blocking();
+	cli::print_blocking("initialize gpio profiler pins... ");
+
+	auto profilerPin = mcu::gpio::DurationLogger<>::init(GPIOC, GPIO_PIN_10);
+	mcu::gpio::DurationLogger<>::init(GPIOC, GPIO_PIN_11);
+	mcu::gpio::DurationLogger<>::init(GPIOC, GPIO_PIN_12);
+
+	cli::print_blocking("done");
+
+
 	/* === CLOCK === */
 	cli::nextline_blocking();
 	cli::print_blocking("configure system clock... ");
@@ -99,6 +115,7 @@ int main()
 	mcu::SystemClock::init();
 
 	cli::print_blocking("done");
+
 
 	/* === CAN1 === */
 	cli::nextline_blocking();
@@ -126,15 +143,7 @@ int main()
 	while (true)
 	{
 		mcu::SystemClock::runTasks();
-		cliServer.run();
-		{
-			//mcu::gpio::LOG_DURATION(bsp::ledGreen, SET_RESET);
-			mcu::delay_ms(500);
-		}
-		{
-			//mcu::gpio::LOG_DURATION(bsp::ledBlue, TOGGLE);
-			mcu::delay_ms(1000);
-		}	
+		cliServer.run();	
 	}
 }
 
