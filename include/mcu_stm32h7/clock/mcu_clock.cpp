@@ -32,7 +32,7 @@ namespace mcu {
 ///
 void SystemClock::init()
 {
-	for (auto task : m_tasks)
+	for (auto& task : m_tasks)
 	{
 		task.period = 0;
 		task.timestamp = 0;
@@ -52,7 +52,7 @@ void SystemClock::init()
 ///
 void SystemClock::runTasks()
 {
-	for (auto task : m_tasks)
+	for (auto& task : m_tasks)
 	{
 		if (task.period != 0)
 		{

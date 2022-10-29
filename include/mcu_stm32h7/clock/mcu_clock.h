@@ -135,7 +135,7 @@ public:
 	static void reset()
 	{
 		m_time = 0;
-		for (auto task : m_tasks)
+		for (auto& task : m_tasks)
 		{
 			task.timestamp = 0;
 		}
