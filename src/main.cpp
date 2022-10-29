@@ -142,6 +142,15 @@ int main()
 	cli::print_blocking("done");
 	
 
+	/* === CAN2 === */
+	cli::nextline_blocking();
+	cli::print_blocking("configure CAN2 module... ");
+
+	
+
+	cli::print_blocking("done");
+
+
 	/* === INFINITE LOOP === */
 	while (true)
 	{

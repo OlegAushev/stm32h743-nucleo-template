@@ -34,6 +34,10 @@ public:
 		static const mcu::can::RxPinConfig CAN1_RX_PIN_CONFIG;
 		static const mcu::can::TxPinConfig CAN1_TX_PIN_CONFIG;
 		static const mcu::can::Config CAN1_CONFIG;
+
+		static const mcu::can::RxPinConfig CAN2_RX_PIN_CONFIG;
+		static const mcu::can::TxPinConfig CAN2_TX_PIN_CONFIG;
+		static const mcu::can::Config CAN2_CONFIG;
 	} mcu;
 };
 
