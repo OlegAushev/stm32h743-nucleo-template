@@ -45,7 +45,8 @@
 		"ostream": "cpp",
 		"stdexcept": "cpp",
 		"streambuf": "cpp",
-		"typeinfo": "cpp"
+		"typeinfo": "cpp",
+		"cinttypes": "cpp"
 	},
 	"[Log]": {
 		"editor.fontSize": 12

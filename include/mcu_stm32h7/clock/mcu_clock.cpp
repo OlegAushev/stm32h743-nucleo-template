@@ -32,9 +32,12 @@ namespace mcu {
 ///
 void SystemClock::init()
 {
-	m_taskPeriods.fill(0);
-	m_taskTimestamps.fill(0);
-	m_tasks.fill(emptyTask);
+	for (auto task : m_tasks)
+	{
+		task.period = 0;
+		task.timestamp = 0;
+		task.func = emptyTask;
+	}
 
 	m_delayedTaskStart = 0;
 	m_delayedTaskDelay = 0;
@@ -49,15 +52,15 @@ void SystemClock::init()
 ///
 void SystemClock::runTasks()
 {
-	for (size_t i = 0; i < TASK_COUNT; ++i)
+	for (auto task : m_tasks)
 	{
-		if (m_taskPeriods[i] != 0)
+		if (task.period != 0)
 		{
-			if (now() >= (m_taskTimestamps[i] + m_taskPeriods[i]))
+			if (now() >= (task.timestamp + task.period))
 			{
-				if (m_tasks[i]() == TaskStatus::SUCCESS)
+				if (task.func() == TaskStatus::SUCCESS)
 				{
-					m_taskTimestamps[i] = now();
+					task.timestamp = now();
 				}
 			}
 		}

@@ -44,10 +44,18 @@ public:
 		SUCCESS,
 		FAIL
 	};
-private:	
-	static inline std::array<uint64_t, TASK_COUNT> m_taskPeriods;
-	static inline std::array<uint64_t, TASK_COUNT> m_taskTimestamps;	// timestamp of executed task
-	static inline std::array<std::function<TaskStatus(void)>, TASK_COUNT> m_tasks;
+private:
+	struct Task
+	{
+		uint64_t period;
+		uint64_t timestamp;	// timestamp of executed task
+		std::function<TaskStatus(void)> func;
+	};
+	static inline std::array<Task, TASK_COUNT> m_tasks;
+
+	//static inline std::array<uint64_t, TASK_COUNT> m_taskPeriods;
+	//static inline std::array<uint64_t, TASK_COUNT> m_taskTimestamps;	// timestamp of executed task
+	//static inline std::array<std::function<TaskStatus(void)>, TASK_COUNT> m_tasks;
 	static TaskStatus emptyTask() { return TaskStatus::SUCCESS; }
 public:
 	/**
@@ -60,7 +68,7 @@ public:
 	static void setTaskPeriod(size_t index, uint64_t period)
 	{
 		assert(index < TASK_COUNT);
-		m_taskPeriods[index] = period;
+		m_tasks[index].period = period;
 	}
 
 	/**
@@ -73,7 +81,7 @@ public:
 	static void registerTask(size_t index, std::function<TaskStatus(void)>task)
 	{
 		assert(index < TASK_COUNT);
-		m_tasks[index] = task;
+		m_tasks[index].func = task;
 	}
 
 /* delayed task */
@@ -127,7 +135,10 @@ public:
 	static void reset()
 	{
 		m_time = 0;
-		m_taskTimestamps.fill(0);
+		for (auto task : m_tasks)
+		{
+			task.timestamp = 0;
+		}
 	}
 
 	/**
