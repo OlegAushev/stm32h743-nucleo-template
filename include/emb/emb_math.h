@@ -1,4 +1,15 @@
-///
+/**
+ * @file emb_math.h
+ * @author Oleg Aushev (aushevom@protonmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2022-10-30
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
+
 #pragma once
 
 
@@ -22,8 +33,8 @@ inline constexpr float pi_over_3 = pi / 3;
 inline constexpr float pi_over_6 = pi / 6;
 inline constexpr float two_pi = 2 * pi;
 
-inline constexpr float sqrt_2 = sqrt(2.f);
-inline constexpr float sqrt_3 = sqrt(3.f);
+inline float sqrt_2 = std::sqrt(2.f);
+inline float sqrt_3 = std::sqrt(3.f);
 
 
 /**

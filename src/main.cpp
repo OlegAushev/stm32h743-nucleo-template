@@ -28,6 +28,7 @@
 #include "cli/shell/cli_shell.h"
 
 #include "build/generated/git_version.h"
+#include "tests/tests.h"
 
 
 /**
@@ -130,6 +131,15 @@ int main()
 	mcu::SystemClock::setTaskPeriod(0, 2000);
 
 	cli::print_blocking("done");
+
+
+	/* === TESTS RUNNING === */
+#ifdef ON_TARGET_TEST_BUILD
+	cli::nextline_blocking();
+	cli::print_blocking(CLI_COLOR_YELLOW "on-target testing build configuration is selected, run tests..." CLI_COLOR_OFF);
+	cli::nextline_blocking();
+	emb::run_tests();
+#endif
 
 
 	/* === CAN1 === */

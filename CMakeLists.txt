@@ -42,6 +42,7 @@ set(project_incdirs
 	${PROJECT_SOURCE_DIR}
 	${PROJECT_SOURCE_DIR}/include
 	${PROJECT_SOURCE_DIR}/src
+	${PROJECT_SOURCE_DIR}/tests
 )
 
 file(GLOB_RECURSE stm32cubemx_sources CONFIGURE_DEPENDS
@@ -54,6 +55,7 @@ file(GLOB_RECURSE project_sources CONFIGURE_DEPENDS
 	${PROJECT_SOURCE_DIR}/include/*.cpp
 	${PROJECT_SOURCE_DIR}/src/*.c
 	${PROJECT_SOURCE_DIR}/src/*.cpp
+	${PROJECT_SOURCE_DIR}/tests/*.cpp
 )
 
 ################################################################################
@@ -73,6 +75,14 @@ target_compile_definitions(${executable} PRIVATE
 	${mcu_model}
 	USE_HAL_DRIVER
 )
+
+option(ON_TARGET_TEST_BUILD "On-target testing build configuration" OFF)
+if(ON_TARGET_TEST_BUILD)
+	message(WARNING "On-target testing build configuration is ON")
+	target_compile_definitions(${executable} PRIVATE
+		ON_TARGET_TEST_BUILD
+	)
+endif()
 
 target_include_directories(${executable} SYSTEM PRIVATE
 	${stm32cubemx_incdirs}
