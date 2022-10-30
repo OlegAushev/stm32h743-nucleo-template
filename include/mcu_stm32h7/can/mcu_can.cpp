@@ -31,25 +31,25 @@ namespace can {
 
 extern "C" void FDCAN1_IT0_IRQHandler(void)
 {
-	HAL_FDCAN_IRQHandler(&mcu::can::Can<1>::instance()->handle());
+	HAL_FDCAN_IRQHandler(&mcu::can::Module<1>::instance()->handle());
 }
 
 
 extern "C" void FDCAN2_IT0_IRQHandler(void)
 {
-	HAL_FDCAN_IRQHandler(&mcu::can::Can<2>::instance()->handle());
+	HAL_FDCAN_IRQHandler(&mcu::can::Module<2>::instance()->handle());
 }
 
 
 extern "C" void FDCAN1_IT1_IRQHandler(void)
 {
-	HAL_FDCAN_IRQHandler(&mcu::can::Can<1>::instance()->handle());
+	HAL_FDCAN_IRQHandler(&mcu::can::Module<1>::instance()->handle());
 }
 
 
 extern "C" void FDCAN2_IT1_IRQHandler(void)
 {
-	HAL_FDCAN_IRQHandler(&mcu::can::Can<2>::instance()->handle());
+	HAL_FDCAN_IRQHandler(&mcu::can::Module<2>::instance()->handle());
 }
 
 
@@ -73,11 +73,11 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef* handle, uint32_t intrFlags)
 
 			if (handle->Instance == FDCAN1)
 			{
-				mcu::can::Can<1>::onFrameReceived(frame);
+				mcu::can::Module<1>::onFrameReceived(frame);
 			}
 			else
 			{
-				mcu::can::Can<2>::onFrameReceived(frame);
+				mcu::can::Module<2>::onFrameReceived(frame);
 			}
 		} while (HAL_FDCAN_GetRxFifoFillLevel(handle, FDCAN_RX_FIFO0) > 0); 
 	}

@@ -52,7 +52,7 @@ int main()
 
 
 	/* === UART === */
-	mcu::uart::Uart<2> uart2(
+	mcu::uart::Module<2> uart2(
 			settings.mcu.UART2_RX_PIN_CONFIG,
 			settings.mcu.UART2_TX_PIN_CONFIG,
 			settings.mcu.UART2_CONFIG);
@@ -137,7 +137,7 @@ int main()
 	cli::print_blocking("configure CAN1 module... ");
 
 	std::vector<FDCAN_FilterTypeDef> can1RxFilters;
-	mcu::can::Can<1> can1(
+	mcu::can::Module<1> can1(
 			settings.mcu.CAN1_RX_PIN_CONFIG,
 			settings.mcu.CAN1_TX_PIN_CONFIG,
 			settings.mcu.CAN1_CONFIG,

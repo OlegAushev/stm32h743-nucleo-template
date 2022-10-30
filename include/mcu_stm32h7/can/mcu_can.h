@@ -62,7 +62,7 @@ struct Config
  * @brief 
  * 
  */
-class CanBase
+class ModuleBase
 {
 private:
 	static inline bool m_isClockEnabled{false};
@@ -81,8 +81,8 @@ protected:
  * 
  * @tparam Module 
  */
-template <unsigned int Module>
-class Can : public CanBase, private emb::noncopyable, public emb::irq_singleton<Can<Module>>
+template <unsigned int ModuleId>
+class Module : public ModuleBase, private emb::noncopyable, public emb::irq_singleton<Module<ModuleId>>
 {
 	friend void ::HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef*, uint32_t);
 private:
@@ -91,8 +91,8 @@ private:
 	mcu::gpio::Output m_txPin;
 
 	uint64_t m_txErrorCounter{0};
-public:
-	static constexpr std::array<uint32_t, 9> DATA_LENGTH_CODES = {	FDCAN_DLC_BYTES_0,
+
+	static constexpr std::array<uint32_t, 9> s_dataLengthCodes = {	FDCAN_DLC_BYTES_0,
 									FDCAN_DLC_BYTES_1,
 									FDCAN_DLC_BYTES_2,
 									FDCAN_DLC_BYTES_3,
@@ -103,19 +103,19 @@ public:
 									FDCAN_DLC_BYTES_8};
 public:
 	/**
-	 * @brief Construct a new Can object
+	 * @brief Construct a new Module object
 	 * 
 	 * @param rxPinCfg 
 	 * @param txPinCfg 
 	 * @param cfg 
 	 * @param rxFilters 
 	 */
-	Can(const RxPinConfig& rxPinCfg, const TxPinConfig& txPinCfg, const Config& cfg,
+	Module(const RxPinConfig& rxPinCfg, const TxPinConfig& txPinCfg, const Config& cfg,
 		std::vector<FDCAN_FilterTypeDef>& rxFilters)
-		: emb::irq_singleton<Can<Module>>(this)
+		: emb::irq_singleton<Module<ModuleId>>(this)
 	{
 
-		static_assert(Module == 1 || Module == 2);
+		static_assert(ModuleId == 1 || ModuleId == 2);
 
 		m_rxPin.init({
 			.port = rxPinCfg.port,
@@ -139,8 +139,8 @@ public:
 			},
 			.activeState = emb::PinActiveState::HIGH});
 
-		if constexpr (Module == 1)	{ m_handle.Instance = FDCAN1; }
-		else if constexpr (Module == 2) { m_handle.Instance = FDCAN2; }
+		if constexpr (ModuleId == 1)		{ m_handle.Instance = FDCAN1; }
+		else if constexpr (ModuleId == 2)	{ m_handle.Instance = FDCAN2; }
 		else { fatal_error("invalid CAN module"); }
 
 		enableClock();
@@ -212,7 +212,7 @@ public:
 			.Identifier = frame.id,
 			.IdType = FDCAN_STANDARD_ID,
 			.TxFrameType = FDCAN_DATA_FRAME,
-			.DataLength = DATA_LENGTH_CODES[frame.len],
+			.DataLength = s_dataLengthCodes[frame.len],
 			.ErrorStateIndicator = FDCAN_ESI_ACTIVE,
 			.BitRateSwitch = FDCAN_BRS_OFF,
 			.FDFormat = FDCAN_CLASSIC_CAN,

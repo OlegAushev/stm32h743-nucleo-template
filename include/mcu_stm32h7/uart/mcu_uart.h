@@ -54,8 +54,8 @@ struct Config
 };
 
 
-template <unsigned int Module>
-class Uart : public emb::IUart, private emb::noncopyable
+template <unsigned int ModuleId>
+class Module : public emb::IUart, private emb::noncopyable
 {
 private:
 	UART_HandleTypeDef m_handle;
@@ -65,15 +65,15 @@ private:
 	static constexpr uint32_t TIMEOUT_ms = 1000;
 public:
 	/**
-	 * @brief Construct a new Uart object
+	 * @brief Construct a new Module object
 	 * 
 	 * @param rxPinCfg 
 	 * @param txPinCfg 
 	 * @param cfg 
 	 */
-	Uart(const RxPinConfig& rxPinCfg, const TxPinConfig& txPinCfg, const Config& cfg)
+	Module(const RxPinConfig& rxPinCfg, const TxPinConfig& txPinCfg, const Config& cfg)
 	{
-		static_assert(Module >= 1 && Module <= 8);
+		static_assert(ModuleId >= 1 && ModuleId <= 8);
 
 		m_rxPin.init({
 			.port = rxPinCfg.port, 
@@ -97,14 +97,14 @@ public:
 			},
 			.activeState = emb::PinActiveState::HIGH});
 
-		if constexpr (Module == 1)	{ __HAL_RCC_USART1_CLK_ENABLE(); m_handle.Instance = USART1; }
-		else if constexpr (Module == 2)	{ __HAL_RCC_USART2_CLK_ENABLE(); m_handle.Instance = USART2; }
-		else if constexpr (Module == 3)	{ __HAL_RCC_USART3_CLK_ENABLE(); m_handle.Instance = USART3; }
-		else if constexpr (Module == 4)	{ __HAL_RCC_UART4_CLK_ENABLE(); m_handle.Instance = UART4; }
-		else if constexpr (Module == 5)	{ __HAL_RCC_UART5_CLK_ENABLE(); m_handle.Instance = UART5; }
-		else if constexpr (Module == 6)	{ __HAL_RCC_USART6_CLK_ENABLE(); m_handle.Instance = USART6; }
-		else if constexpr (Module == 7)	{ __HAL_RCC_UART7_CLK_ENABLE(); m_handle.Instance = UART7; }
-		else if constexpr (Module == 8)	{ __HAL_RCC_UART8_CLK_ENABLE(); m_handle.Instance = UART8; }
+		if constexpr (ModuleId == 1)		{ __HAL_RCC_USART1_CLK_ENABLE(); m_handle.Instance = USART1; }
+		else if constexpr (ModuleId == 2)	{ __HAL_RCC_USART2_CLK_ENABLE(); m_handle.Instance = USART2; }
+		else if constexpr (ModuleId == 3)	{ __HAL_RCC_USART3_CLK_ENABLE(); m_handle.Instance = USART3; }
+		else if constexpr (ModuleId == 4)	{ __HAL_RCC_UART4_CLK_ENABLE(); m_handle.Instance = UART4; }
+		else if constexpr (ModuleId == 5)	{ __HAL_RCC_UART5_CLK_ENABLE(); m_handle.Instance = UART5; }
+		else if constexpr (ModuleId == 6)	{ __HAL_RCC_USART6_CLK_ENABLE(); m_handle.Instance = USART6; }
+		else if constexpr (ModuleId == 7)	{ __HAL_RCC_UART7_CLK_ENABLE(); m_handle.Instance = UART7; }
+		else if constexpr (ModuleId == 8)	{ __HAL_RCC_UART8_CLK_ENABLE(); m_handle.Instance = UART8; }
 		else { fatal_error("invalid UART module"); }
 
 		m_handle.Init = cfg.init;
