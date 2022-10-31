@@ -140,17 +140,6 @@ int main()
 			settings.mcu.can1Config,
 			can1RxFilters);
 	
-	auto can1Loop = [&can1](can_frame frame)
-	{
-		can1.send(frame);
-		bsp::ledGreen.toggle();
-	};
-	can1.initRxInterrupt(can1Loop, mcu::InterruptPriority(10));
-	can1.enableInterrupts();
-
-	cli::print_blocking("done");
-	
-
 	/* === CAN2 === */
 	cli::nextline_blocking();
 	cli::print_blocking("configure CAN2 module... ");
@@ -161,6 +150,23 @@ int main()
 			settings.mcu.can2TxPinConfig,
 			settings.mcu.can2Config,
 			can2RxFilters);
+
+	cli::print_blocking("done");
+
+
+	/* === CAN1 to CAN2 LOOPBACK === */
+	cli::nextline_blocking();
+	cli::print_blocking("configure CAN1 to CAN2 loopback... ");
+
+	auto canLoop = [&can1, &can2](can_frame frame)
+	{
+		can1.send({.id = 0x701, .len = 1, .data = {0x42}});
+		can2.send(frame);
+		bsp::ledBlue.set();
+		mcu::SystemClock::registerDelayedTask([](){ bsp::ledBlue.reset(); }, 100);
+	};
+	can1.initRxInterrupt(canLoop, mcu::InterruptPriority(10));
+	can1.enableInterrupts();
 
 	cli::print_blocking("done");
 
