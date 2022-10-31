@@ -52,10 +52,6 @@ private:
 		std::function<TaskStatus(void)> func;
 	};
 	static inline std::array<Task, TASK_COUNT> m_tasks;
-
-	//static inline std::array<uint64_t, TASK_COUNT> m_taskPeriods;
-	//static inline std::array<uint64_t, TASK_COUNT> m_taskTimestamps;	// timestamp of executed task
-	//static inline std::array<std::function<TaskStatus(void)>, TASK_COUNT> m_tasks;
 	static TaskStatus emptyTask() { return TaskStatus::SUCCESS; }
 public:
 	/**

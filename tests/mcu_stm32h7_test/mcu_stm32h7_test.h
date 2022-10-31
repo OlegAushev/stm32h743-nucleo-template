@@ -15,14 +15,18 @@
 
 #include "emb/emb_testrunner/emb_testrunner.h"
 
+#include "mcu_stm32h7/system/mcu_system.h"
 #include "mcu_stm32h7/gpio/mcu_gpio.h"
+#include "mcu_stm32h7/clock/mcu_clock.h"
 #include "bsp_h743_nucleo/leds/leds.h"
+
 
 
 class McuTest
 {
 public:
 	static void GpioTest();
+	static void ClockTest();
 };
 
 

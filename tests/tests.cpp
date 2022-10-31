@@ -21,6 +21,7 @@ void emb::run_tests()
 	emb::TestRunner::print_nextline = cli::nextline_blocking;
 
 	EMB_RUN_TEST(McuTest::GpioTest);
+	EMB_RUN_TEST(McuTest::ClockTest);
 
 	emb::TestRunner::printResult();
 }

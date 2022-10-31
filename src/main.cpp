@@ -117,18 +117,6 @@ int main()
 	cli::print_blocking("configure system clock... ");
 
 	mcu::SystemClock::init();
-	auto taskLedHeartbeat = [](){
-		const uint64_t periods[4] = {100, 100, 100, 700};
-		static size_t index = 0;
-
-		mcu::SystemClock::setTaskPeriod(0, periods[index]);
-		if ((index % 2) == 0) { bsp::ledGreen.set(); }
-		else { bsp::ledGreen.reset(); }
-		index = (index + 1) % 4;
-		return mcu::SystemClock::TaskStatus::SUCCESS;
-	};
-	mcu::SystemClock::registerTask(0, taskLedHeartbeat);
-	mcu::SystemClock::setTaskPeriod(0, 2000);
 
 	cli::print_blocking("done");
 
@@ -140,7 +128,6 @@ int main()
 	cli::nextline_blocking();
 	emb::run_tests();
 #endif
-
 
 	/* === CAN1 === */
 	cli::nextline_blocking();
@@ -168,9 +155,25 @@ int main()
 	cli::nextline_blocking();
 	cli::print_blocking("configure CAN2 module... ");
 
-	
+	// CAN2 initialization
 
 	cli::print_blocking("done");
+
+
+	/* === CLOCK TASKS === */
+	auto taskLedHeartbeat = []()
+	{
+		const uint64_t periods[4] = {100, 100, 100, 700};
+		static size_t index = 0;
+
+		mcu::SystemClock::setTaskPeriod(0, periods[index]);
+		if ((index % 2) == 0) { bsp::ledGreen.set(); }
+		else { bsp::ledGreen.reset(); }
+		index = (index + 1) % 4;
+		return mcu::SystemClock::TaskStatus::SUCCESS;
+	};
+	mcu::SystemClock::registerTask(0, taskLedHeartbeat);
+	mcu::SystemClock::setTaskPeriod(0, 2000);
 
 
 	/* === INFINITE LOOP === */
