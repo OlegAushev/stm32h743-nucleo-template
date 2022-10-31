@@ -54,9 +54,9 @@ int main()
 
 	/* === UART === */
 	mcu::uart::Module<2> uart2(
-			settings.mcu.UART2_RX_PIN_CONFIG,
-			settings.mcu.UART2_TX_PIN_CONFIG,
-			settings.mcu.UART2_CONFIG);
+			settings.mcu.uart2RxPinConfig,
+			settings.mcu.uart2TxPinConfig,
+			settings.mcu.uart2Config);
 
 
 	/* === CLI === */
@@ -135,9 +135,9 @@ int main()
 
 	std::vector<FDCAN_FilterTypeDef> can1RxFilters;
 	mcu::can::Module<1> can1(
-			settings.mcu.CAN1_RX_PIN_CONFIG,
-			settings.mcu.CAN1_TX_PIN_CONFIG,
-			settings.mcu.CAN1_CONFIG,
+			settings.mcu.can1RxPinConfig,
+			settings.mcu.can1TxPinConfig,
+			settings.mcu.can1Config,
 			can1RxFilters);
 	
 	auto can1Loop = [&can1](can_frame frame)
@@ -155,12 +155,20 @@ int main()
 	cli::nextline_blocking();
 	cli::print_blocking("configure CAN2 module... ");
 
-	// CAN2 initialization
+	std::vector<FDCAN_FilterTypeDef> can2RxFilters;
+	mcu::can::Module<2> can2(
+			settings.mcu.can2RxPinConfig,
+			settings.mcu.can2TxPinConfig,
+			settings.mcu.can2Config,
+			can2RxFilters);
 
 	cli::print_blocking("done");
 
 
 	/* === CLOCK TASKS === */
+	cli::nextline_blocking();
+	cli::print_blocking("configure system clock periodic tasks... ");
+
 	auto taskLedHeartbeat = []()
 	{
 		const uint64_t periods[4] = {100, 100, 100, 700};
@@ -174,6 +182,8 @@ int main()
 	};
 	mcu::SystemClock::registerTask(0, taskLedHeartbeat);
 	mcu::SystemClock::setTaskPeriod(0, 2000);
+
+	cli::print_blocking("done");
 
 
 	/* === INFINITE LOOP === */

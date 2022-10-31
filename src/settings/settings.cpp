@@ -14,17 +14,17 @@
 
 
 /* UART2 */
-const mcu::uart::RxPinConfig Settings::Mcu::UART2_RX_PIN_CONFIG = {	
+const mcu::uart::RxPinConfig Settings::Mcu::uart2RxPinConfig = {	
 	.port = CN9_USART_B_RX_PORT,
 	.pin = CN9_USART_B_RX_PIN,
 	.afSelection = CN9_USART_B_RX_AF
 };
-const mcu::uart::TxPinConfig Settings::Mcu::UART2_TX_PIN_CONFIG = {
+const mcu::uart::TxPinConfig Settings::Mcu::uart2TxPinConfig = {
 	.port = CN9_USART_B_TX_PORT,
 	.pin = CN9_USART_B_TX_PIN,
 	.afSelection = CN9_USART_B_TX_AF
 };
-const mcu::uart::Config Settings::Mcu::UART2_CONFIG = {
+const mcu::uart::Config Settings::Mcu::uart2Config = {
 	.init = {	
 		.BaudRate = 9600,
 		.WordLength = UART_WORDLENGTH_8B,
@@ -40,17 +40,17 @@ const mcu::uart::Config Settings::Mcu::UART2_CONFIG = {
 
 
 /* CAN1 */
-const mcu::can::RxPinConfig Settings::Mcu::CAN1_RX_PIN_CONFIG = {
+const mcu::can::RxPinConfig Settings::Mcu::can1RxPinConfig = {
 	.port = CN9_CAN1_RX_PORT,
 	.pin = CN9_CAN1_RX_PIN,
 	.afSelection = CN9_CAN1_RX_AF
 };
-const mcu::can::TxPinConfig Settings::Mcu::CAN1_TX_PIN_CONFIG = {
+const mcu::can::TxPinConfig Settings::Mcu::can1TxPinConfig = {
 	.port = CN9_CAN1_TX_PORT,
 	.pin = CN9_CAN1_TX_PIN,
 	.afSelection = CN9_CAN1_TX_AF
 };
-const mcu::can::Config Settings::Mcu::CAN1_CONFIG = {
+const mcu::can::Config Settings::Mcu::can1Config = {
 	.init = {
 		.FrameFormat = FDCAN_FRAME_CLASSIC,
 		.Mode = FDCAN_MODE_NORMAL,
@@ -78,17 +78,17 @@ const mcu::can::Config Settings::Mcu::CAN1_CONFIG = {
 
 
 /* CAN2 */
-const mcu::can::RxPinConfig Settings::Mcu::CAN2_RX_PIN_CONFIG = {
+const mcu::can::RxPinConfig Settings::Mcu::can2RxPinConfig = {
 	.port = CN12_CAN2_RX_PORT,
 	.pin = CN12_CAN2_RX_PIN,
 	.afSelection = CN12_CAN2_RX_AF
 };
-const mcu::can::TxPinConfig Settings::Mcu::CAN2_TX_PIN_CONFIG = {
+const mcu::can::TxPinConfig Settings::Mcu::can2TxPinConfig = {
 	.port = CN12_CAN2_TX_PORT,
 	.pin = CN12_CAN2_TX_PIN,
 	.afSelection = CN12_CAN2_TX_AF
 };
-const mcu::can::Config Settings::Mcu::CAN2_CONFIG = {
+const mcu::can::Config Settings::Mcu::can2Config = {
 	.init = {
 		.FrameFormat = FDCAN_FRAME_CLASSIC,
 		.Mode = FDCAN_MODE_EXTERNAL_LOOPBACK,

@@ -27,17 +27,17 @@ public:
 public:
 	struct Mcu
 	{
-		static const mcu::uart::RxPinConfig UART2_RX_PIN_CONFIG;
-		static const mcu::uart::TxPinConfig UART2_TX_PIN_CONFIG;
-		static const mcu::uart::Config UART2_CONFIG;
+		static const mcu::uart::RxPinConfig uart2RxPinConfig;
+		static const mcu::uart::TxPinConfig uart2TxPinConfig;
+		static const mcu::uart::Config uart2Config;
 		
-		static const mcu::can::RxPinConfig CAN1_RX_PIN_CONFIG;
-		static const mcu::can::TxPinConfig CAN1_TX_PIN_CONFIG;
-		static const mcu::can::Config CAN1_CONFIG;
+		static const mcu::can::RxPinConfig can1RxPinConfig;
+		static const mcu::can::TxPinConfig can1TxPinConfig;
+		static const mcu::can::Config can1Config;
 
-		static const mcu::can::RxPinConfig CAN2_RX_PIN_CONFIG;
-		static const mcu::can::TxPinConfig CAN2_TX_PIN_CONFIG;
-		static const mcu::can::Config CAN2_CONFIG;
+		static const mcu::can::RxPinConfig can2RxPinConfig;
+		static const mcu::can::TxPinConfig can2TxPinConfig;
+		static const mcu::can::Config can2Config;
 	} mcu;
 };
 
