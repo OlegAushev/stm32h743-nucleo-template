@@ -25,9 +25,7 @@ namespace emb
 {
 
 
-#ifdef ON_TARGET_TEST_BUILD
 void run_tests();
-#endif
 
 
 /**
@@ -148,7 +146,7 @@ public:
 #ifdef ON_TARGET_TEST_BUILD
 #define EMB_ASSERT_EQUAL(x, y) \
 { \
-	const char* hint = "[  WARN  ] Assertion failed: " #x " != " #y ", file: " __FILE__ ", line: " __LINE__; \
+	const char* hint = "[  WARN  ] Assertion failed: " #x " != " #y ", file: " __FILE__ ", line: " EMB_STRINGIZE(__LINE__); \
 	emb::TestRunner::assertEqual(x, y, hint); \
 }
 #else
@@ -163,7 +161,7 @@ public:
 #ifdef ON_TARGET_TEST_BUILD
 #define EMB_ASSERT_TRUE(x) \
 { \
-	const char* hint = "[  WARN  ] Assertion failed: " #x " is false, file: " __FILE__ ", line: " __LINE__; \
+	const char* hint = "[  WARN  ] Assertion failed: " #x " is false, file: " __FILE__ ", line: " EMB_STRINGIZE(__LINE__); \
 	emb::TestRunner::assertTrue(x, hint); \
 }
 #else

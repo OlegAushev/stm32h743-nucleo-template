@@ -67,7 +67,36 @@ protected:
 	Gpio() : m_initialized(false) {}
 public:
 	/**
+	 * @brief Initializes GPIO pin.
+	 * 
+	 * @param cfg pin config
+	 * @return (none)
+	 */
+	void init(const Config& cfg)
+	{
+		m_cfg = cfg;
+		HAL_GPIO_Init(m_cfg.port, &m_cfg.pin);
+		m_initialized = true;
+	}
+
+	/**
+	 * @brief De-initializes GPIO pin.
+	 * 
+	 * @param (none)
+	 * @return (none)
+	 */
+	void deinit()
+	{	
+		if (m_initialized)
+		{
+			HAL_GPIO_DeInit(m_cfg.port, m_cfg.pin.Pin);
+			m_initialized = false;
+		}
+	}
+
+	/**
 	 * @brief Returns reference to pin config.
+	 * 
 	 * @param (none)
 	 * @return Reference to pin config.
 	 */
@@ -79,13 +108,15 @@ public:
 	/**
 	 * @brief Returns pin number.
 	 * 
-	 * @return Pin number 
+	 * @param (none)
+	 * @return Pin number.
 	 */
 	unsigned int pinNo() const { return POSITION_VAL(m_cfg.pin.Pin); }
 
 	/**
 	 * @brief Returns pin bit.
 	 * 
+	 * @param (none)
 	 * @return uint16_t 
 	 */
 	uint16_t pinBit() const { return static_cast<uint16_t>(m_cfg.pin.Pin); }
@@ -93,6 +124,7 @@ public:
 	/**
 	 * @brief Returns pin port.
 	 * 
+	 * @param (none)
 	 * @return GPIO_TypeDef* 
 	 */
 	GPIO_TypeDef* port() { return m_cfg.port; }
@@ -128,18 +160,6 @@ public:
 	}
 
 	/**
-	 * @brief Initializes GPIO input pin.
-	 * @param cfg pin config
-	 * @return (none)
-	 */
-	void init(const Config& cfg)
-	{
-		m_cfg = cfg;
-		HAL_GPIO_Init(m_cfg.port, &m_cfg.pin);
-		m_initialized = true;
-	}
-
-	/**
 	 * @brief Reads pin state.
 	 * @param (none)
 	 * @return Pin state.
@@ -152,6 +172,17 @@ public:
 				^ static_cast<uint32_t>(m_cfg.activeState)));
 	}
 
+	/**
+	 * @brief Reads pin value.
+	 * 
+	 * @param (none)
+	 * @return int 
+	 */
+	virtual int readValue() const override
+	{
+		assert_param(m_initialized);
+		return static_cast<int>(HAL_GPIO_ReadPin(m_cfg.port, static_cast<uint16_t>(m_cfg.pin.Pin)));
+	}
 private:
 	IRQn_Type m_irqn{NonMaskableInt_IRQn};	// use NonMaskableInt_IRQn as value for not initialized interrupt
 	static std::array<std::function<void(void)>, 16> onInterrupt;
@@ -248,18 +279,6 @@ public:
 	}
 
 	/**
-	 * @brief Initializes GPIO output pin.
-	 * @param cfg pin config
-	 * @return (none)
-	 */
-	void init(const Config& cfg)
-	{
-		m_cfg = cfg;
-		HAL_GPIO_Init(m_cfg.port, &m_cfg.pin);
-		m_initialized = true;
-	}
-
-	/**
 	 * @brief Reads pin state.
 	 * @param (none)
 	 * @return Pin state.
@@ -270,6 +289,18 @@ public:
 		return static_cast<emb::PinState>(1
 				- (HAL_GPIO_ReadPin(m_cfg.port, static_cast<uint16_t>(m_cfg.pin.Pin))
 				^ static_cast<uint32_t>(m_cfg.activeState)));
+	}
+
+	/**
+	 * @brief Reads pin value.
+	 * 
+	 * @param (none)
+	 * @return int 
+	 */
+	virtual int readValue() const override
+	{
+		assert_param(m_initialized);
+		return static_cast<int>(HAL_GPIO_ReadPin(m_cfg.port, static_cast<uint16_t>(m_cfg.pin.Pin)));
 	}
 
 	/**
