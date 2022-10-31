@@ -199,7 +199,7 @@ constexpr inline std::pair<It, It> minmax_element(It first, It last)
 
 	if ((first == last) || (++first == last))
 	{
-		return std::make_pair<It, It>(min, max);
+		return {min, max};
 	}
 
 	if (*first < *min)
@@ -234,7 +234,7 @@ constexpr inline std::pair<It, It> minmax_element(It first, It last)
 			}
 		}
 	}
-	return std::make_pair<It, It>(min, max);
+	return {min, max};
 }
 
 

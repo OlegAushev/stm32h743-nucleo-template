@@ -19,8 +19,7 @@
 extern "C" { 
 #include "arm_math.h"
 }
-#include "limits.h"
-#include "float.h"
+#include <limits.h>
 
 
 namespace emb {

@@ -14,6 +14,5 @@
 
 
 #include "emb/emb_testrunner/emb_testrunner.h"
-#include "cli/cli_server.h"
 
 
