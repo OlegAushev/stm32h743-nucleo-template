@@ -14,9 +14,9 @@
 
 
 #include <cstring>
+#include <algorithm>
 
 #include "emb_def.h"
-#include "emb_algorithm.h"
 
 
 namespace emb {
@@ -122,11 +122,11 @@ public:
 		assert(len <= Capacity);
 		if (len > m_len)
 		{
-			emb::fill(m_data + m_len, m_data + len, 0);
+			std::fill(m_data + m_len, m_data + len, 0);
 		}
 		else
 		{
-			emb::fill(m_data + len, m_data + m_len, 0);
+			std::fill(m_data + len, m_data + m_len, 0);
 		}
 		m_len = len;
 	}
@@ -136,11 +136,11 @@ public:
 		assert(len <= Capacity);
 		if (len > m_len)
 		{
-			emb::fill(m_data + m_len, m_data + len, ch);
+			std::fill(m_data + m_len, m_data + len, ch);
 		}
 		else
 		{
-			emb::fill(m_data + len, m_data + m_len, ch);
+			std::fill(m_data + len, m_data + m_len, ch);
 		}
 		m_len = len;
 	}

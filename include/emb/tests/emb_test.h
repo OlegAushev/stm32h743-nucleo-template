@@ -15,6 +15,7 @@
 
 #include "emb/emb_testrunner/emb_testrunner.h"
 #include "emb/emb_def.h"
+#include "emb/emb_math.h"
 #include "emb/emb_algorithm.h"
 //#include "emb/emb_array.h"
 //#include "emb/emb_queue.h"
@@ -29,7 +30,7 @@ class EmbTest
 {
 public:
 	//static void CommonTest();
-	//static void MathTest();
+	static void MathTest();
 	static void AlgorithmTest();
 	//static void ArrayTest();
 	//static void QueueTest();

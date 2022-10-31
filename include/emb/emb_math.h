@@ -13,13 +13,14 @@
 #pragma once
 
 
-#include "emb_def.h"
-#include "emb_algorithm.h"
+#include <algorithm>
+#include <limits.h>
 
 extern "C" { 
 #include "arm_math.h"
 }
-#include <limits.h>
+
+#include "emb_def.h"
 
 
 namespace emb {
@@ -143,27 +144,27 @@ public:
 	Range<T> range;
 
 	Integrator(const Range<T>& _range, const Time& _dt, const T& _init)
-		: range(_range)
-		, m_dt(_dt)
+		: m_dt(_dt)
 		, m_init(_init)
+		, range(_range)
 	{
 		reset();
 	}
 
 	void integrate(const T& value)
 	{
-		m_sum = clamp(m_sum + value * m_dt, range.lo(), range.hi());
+		m_sum = std::clamp(m_sum + value * m_dt, range.lo(), range.hi());
 	}
 
 	void add(const T& value)
 	{
-		m_sum = clamp(m_sum + value, range.lo(), range.hi());
+		m_sum = std::clamp(m_sum + value, range.lo(), range.hi());
 	}
 
 	const T& value() const { return m_sum; }
 	void reset()
 	{
-		m_sum = clamp(m_init, range.lo(), range.hi());
+		m_sum = std::clamp(m_init, range.lo(), range.hi());
 	}
 };
 
