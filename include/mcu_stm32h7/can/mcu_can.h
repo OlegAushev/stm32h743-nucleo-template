@@ -161,38 +161,29 @@ public:
 		}
 
 		/* Configure Rx filters */
-
-
-		/* Configure Rx filter */
-		//if (HAL_FDCAN_ConfigFilter(&m_handle, &sFilterConfig) != HAL_OK)
-		//{
-		//	fatal_error("CAN module Rx filter configuration failed");
-		//}
-
-
-
-		/*assert_param(rxFilters.size() == (cfg.init.StdFiltersNbr + cfg.init.ExtFiltersNbr));
 		for (auto& filter : rxFilters)
 		{
 			if (HAL_FDCAN_ConfigFilter(&m_handle, &filter) != HAL_OK)
 			{
 				fatal_error("CAN module Rx filter configuration failed");
 			}
-		}*/
+		}
 
 		/* Configure global filter to reject all non-matching frames */
-		//HAL_FDCAN_ConfigGlobalFilter(&m_handle, FDCAN_ACCEPT_IN_RX_FIFO0, FDCAN_ACCEPT_IN_RX_FIFO0, FDCAN_REJECT_REMOTE, FDCAN_REJECT_REMOTE);
+		HAL_FDCAN_ConfigGlobalFilter(&m_handle, FDCAN_REJECT, FDCAN_REJECT, FDCAN_REJECT_REMOTE, FDCAN_REJECT_REMOTE);
+	}
 
+	/**
+	 * @brief 
+	 * 
+	 */
+	void start()
+	{
 		/* Start the FDCAN module */
 		if (HAL_FDCAN_Start(&m_handle) != HAL_OK)
 		{
 			fatal_error("CAN module start failed");
 		}
-
-		//if (HAL_FDCAN_ActivateNotification(&m_handle, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
-		//{
-		//	fatal_error("CAN module notification error");
-		//}
 	}
 
 	/**
@@ -250,18 +241,39 @@ public:
 
 	/* INTERRUPTS */
 public:
-	static inline std::function<void(can_frame)> onFrameReceived = [](auto){ emb::fatal_error("uninitialized callback"); };
+	static inline std::function<void(can_frame)> onFifo0FrameReceived = [](auto){ emb::fatal_error("uninitialized callback"); };
+	static inline std::function<void(can_frame)> onFifo1WatermarkReached = [](auto){ emb::fatal_error("uninitialized callback"); };
 	
 	/**
 	 * @brief 
 	 * 
-	 * @param activeInterrupts combination of @arg FDCAN_Interrupts
+	 * @param interrruptList 
+	 * @param interruptLine 
 	 */
-	void enablePeripheralInterrupts(uint32_t activeInterrupts)
+	void configureInterrupts(uint32_t interrruptList, uint32_t interruptLine)
 	{
-		if (HAL_FDCAN_ActivateNotification(&m_handle, activeInterrupts, 0) != HAL_OK)
+		if (HAL_FDCAN_ConfigInterruptLines(&m_handle, interrruptList, interruptLine) != HAL_OK)
 		{
-			emb::fatal_error("CAN interrupt initialization failed");
+			emb::fatal_error("CAN interrupt configuration failed");
+		}
+	
+		if (HAL_FDCAN_ActivateNotification(&m_handle, interrruptList, 0) != HAL_OK)
+		{
+			emb::fatal_error("CAN interrupt configuration failed");
+		}
+	}
+
+	/**
+	 * @brief 
+	 * 
+	 * @param fifo 
+	 * @param watermark 
+	 */
+	void setFifoWatermark(uint32_t fifo, uint32_t watermark)
+	{
+		if (HAL_FDCAN_ConfigFifoWatermark(&m_handle, fifo, watermark) != HAL_OK)
+		{
+			emb::fatal_error("CAN interrupt configuration failed");
 		}
 	}
 

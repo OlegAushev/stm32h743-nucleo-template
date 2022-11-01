@@ -141,9 +141,19 @@ int main()
 		.FilterIndex = 0,
 		.FilterType = FDCAN_FILTER_MASK,
 		.FilterConfig = FDCAN_FILTER_TO_RXFIFO0,
-		.FilterID1 = 0x321,
+		.FilterID1 = 0x123,
 		.FilterID2 = 0x7FF,
 	};
+	FDCAN_FilterTypeDef filter2 = {
+		.IdType = FDCAN_STANDARD_ID,
+		.FilterIndex = 1,
+		.FilterType = FDCAN_FILTER_MASK,
+		.FilterConfig = FDCAN_FILTER_TO_RXFIFO1,
+		.FilterID1 = 0x124,
+		.FilterID2 = 0x7FF,
+	};
+	can1RxFilters.push_back(filter1);
+	can1RxFilters.push_back(filter2);
 
 	mcu::can::Module<mcu::can::Peripheral::FDCAN_1> can1(
 			settings.mcu.can1RxPinConfig,
@@ -177,13 +187,14 @@ int main()
 		bsp::ledBlue.set();
 		mcu::SystemClock::registerDelayedTask([](){ bsp::ledBlue.reset(); }, 100);
 	};
-	can1.onFrameReceived = canLoop;
-	can1.enablePeripheralInterrupts(FDCAN_IT_RX_FIFO0_NEW_MESSAGE);
-	can1.setInterruptPriority(mcu::InterruptPriority(10), mcu::InterruptPriority(15));
-	can1.enableInterrupts();
-
+	can1.onFifo0FrameReceived = canLoop;
+	//can1.onFifo1WatermarkReached = ;
+	can1.configureInterrupts(FDCAN_IT_RX_FIFO0_NEW_MESSAGE, FDCAN_INTERRUPT_LINE0);
+	can1.configureInterrupts(FDCAN_IT_RX_FIFO1_WATERMARK, FDCAN_INTERRUPT_LINE1);
+	can1.setFifoWatermark(FDCAN_CFG_RX_FIFO1, 4);
+	can1.setInterruptPriority(mcu::InterruptPriority(2), mcu::InterruptPriority(15));
+	
 	cli::print_blocking("done");
-
 
 	/* === CLOCK TASKS === */
 	cli::nextline_blocking();
@@ -204,6 +215,17 @@ int main()
 	mcu::SystemClock::setTaskPeriod(0, 2000);
 
 	cli::print_blocking("done");
+
+
+	/* === START CAN1 and CAN2 === */
+	cli::nextline_blocking();
+	cli::print_blocking("starting CAN1 and CAN2... ");
+
+	can1.start();
+	can2.start();
+	can1.enableInterrupts();
+
+	cli::print_blocking("success");
 
 
 	/* === INFINITE LOOP === */
