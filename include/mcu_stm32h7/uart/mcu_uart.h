@@ -54,8 +54,22 @@ struct Config
 };
 
 
-template <unsigned int ModuleId>
-class Module : public emb::IUart, private emb::noncopyable
+/// @brief 
+enum class Peripheral
+{
+	USART_1,
+	USART_2,
+	USART_3,
+	UART_4,
+	UART_5,
+	USART_6,
+	UART_7,
+	UART_8
+};
+
+
+template <Peripheral Instance>
+class Module : public emb::IUart, private emb::noncopyable, public emb::interrupt_invoker<Module<Instance>>
 {
 private:
 	UART_HandleTypeDef m_handle;
@@ -72,9 +86,8 @@ public:
 	 * @param cfg 
 	 */
 	Module(const RxPinConfig& rxPinCfg, const TxPinConfig& txPinCfg, const Config& cfg)
+		: emb::interrupt_invoker<Module<Instance>>(this)
 	{
-		static_assert(ModuleId >= 1 && ModuleId <= 8);
-
 		m_rxPin.init({
 			.port = rxPinCfg.port, 
 			.pin = {
@@ -97,14 +110,14 @@ public:
 			},
 			.activeState = emb::PinActiveState::HIGH});
 
-		if constexpr (ModuleId == 1)		{ __HAL_RCC_USART1_CLK_ENABLE(); m_handle.Instance = USART1; }
-		else if constexpr (ModuleId == 2)	{ __HAL_RCC_USART2_CLK_ENABLE(); m_handle.Instance = USART2; }
-		else if constexpr (ModuleId == 3)	{ __HAL_RCC_USART3_CLK_ENABLE(); m_handle.Instance = USART3; }
-		else if constexpr (ModuleId == 4)	{ __HAL_RCC_UART4_CLK_ENABLE(); m_handle.Instance = UART4; }
-		else if constexpr (ModuleId == 5)	{ __HAL_RCC_UART5_CLK_ENABLE(); m_handle.Instance = UART5; }
-		else if constexpr (ModuleId == 6)	{ __HAL_RCC_USART6_CLK_ENABLE(); m_handle.Instance = USART6; }
-		else if constexpr (ModuleId == 7)	{ __HAL_RCC_UART7_CLK_ENABLE(); m_handle.Instance = UART7; }
-		else if constexpr (ModuleId == 8)	{ __HAL_RCC_UART8_CLK_ENABLE(); m_handle.Instance = UART8; }
+		if constexpr (Instance == Peripheral::USART_1)		{ __HAL_RCC_USART1_CLK_ENABLE(); m_handle.Instance = USART1; }
+		else if constexpr (Instance == Peripheral::USART_2)	{ __HAL_RCC_USART2_CLK_ENABLE(); m_handle.Instance = USART2; }
+		else if constexpr (Instance == Peripheral::USART_3)	{ __HAL_RCC_USART3_CLK_ENABLE(); m_handle.Instance = USART3; }
+		else if constexpr (Instance == Peripheral::UART_4)	{ __HAL_RCC_UART4_CLK_ENABLE(); m_handle.Instance = UART4; }
+		else if constexpr (Instance == Peripheral::UART_5)	{ __HAL_RCC_UART5_CLK_ENABLE(); m_handle.Instance = UART5; }
+		else if constexpr (Instance == Peripheral::USART_6)	{ __HAL_RCC_USART6_CLK_ENABLE(); m_handle.Instance = USART6; }
+		else if constexpr (Instance == Peripheral::UART_7)	{ __HAL_RCC_UART7_CLK_ENABLE(); m_handle.Instance = UART7; }
+		else if constexpr (Instance == Peripheral::UART_8)	{ __HAL_RCC_UART8_CLK_ENABLE(); m_handle.Instance = UART8; }
 		else { fatal_error("invalid UART module"); }
 
 		m_handle.Init = cfg.init;

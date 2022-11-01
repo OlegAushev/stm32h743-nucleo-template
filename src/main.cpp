@@ -53,7 +53,7 @@ int main()
 
 
 	/* === UART === */
-	mcu::uart::Module<2> uart2(
+	mcu::uart::Module<mcu::uart::Peripheral::USART_2> uart2(
 			settings.mcu.uart2RxPinConfig,
 			settings.mcu.uart2TxPinConfig,
 			settings.mcu.uart2Config);
