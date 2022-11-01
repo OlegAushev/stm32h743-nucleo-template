@@ -92,15 +92,17 @@ private:
 
 	uint64_t m_txErrorCounter{0};
 
-	static constexpr std::array<uint32_t, 9> s_dataLengthCodes = {	FDCAN_DLC_BYTES_0,
-									FDCAN_DLC_BYTES_1,
-									FDCAN_DLC_BYTES_2,
-									FDCAN_DLC_BYTES_3,
-									FDCAN_DLC_BYTES_4,
-									FDCAN_DLC_BYTES_5,
-									FDCAN_DLC_BYTES_6,
-									FDCAN_DLC_BYTES_7,
-									FDCAN_DLC_BYTES_8};
+	static constexpr std::array<uint32_t, 9> s_dataLengthCodes = {	
+		FDCAN_DLC_BYTES_0,
+		FDCAN_DLC_BYTES_1,
+		FDCAN_DLC_BYTES_2,
+		FDCAN_DLC_BYTES_3,
+		FDCAN_DLC_BYTES_4,
+		FDCAN_DLC_BYTES_5,
+		FDCAN_DLC_BYTES_6,
+		FDCAN_DLC_BYTES_7,
+		FDCAN_DLC_BYTES_8
+	};
 public:
 	/**
 	 * @brief Construct a new Module object

@@ -129,6 +129,7 @@ int main()
 	emb::run_tests();
 #endif
 
+
 	/* === CAN1 === */
 	cli::nextline_blocking();
 	cli::print_blocking("configure CAN1 module... ");
@@ -139,6 +140,7 @@ int main()
 			settings.mcu.can1TxPinConfig,
 			settings.mcu.can1Config,
 			can1RxFilters);
+	
 	
 	/* === CAN2 === */
 	cli::nextline_blocking();
