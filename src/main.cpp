@@ -135,6 +135,16 @@ int main()
 	cli::print_blocking("configure CAN1 module... ");
 
 	std::vector<FDCAN_FilterTypeDef> can1RxFilters;
+
+	FDCAN_FilterTypeDef filter1 = {
+		.IdType = FDCAN_STANDARD_ID,
+		.FilterIndex = 0,
+		.FilterType = FDCAN_FILTER_MASK,
+		.FilterConfig = FDCAN_FILTER_TO_RXFIFO0,
+		.FilterID1 = 0x321,
+		.FilterID2 = 0x7FF,
+	};
+
 	mcu::can::Module<mcu::can::Peripheral::FDCAN_1> can1(
 			settings.mcu.can1RxPinConfig,
 			settings.mcu.can1TxPinConfig,
@@ -167,7 +177,9 @@ int main()
 		bsp::ledBlue.set();
 		mcu::SystemClock::registerDelayedTask([](){ bsp::ledBlue.reset(); }, 100);
 	};
-	can1.initRxInterrupt(canLoop, mcu::InterruptPriority(10));
+	can1.onFrameReceived = canLoop;
+	can1.enablePeripheralInterrupts(FDCAN_IT_RX_FIFO0_NEW_MESSAGE);
+	can1.setInterruptPriority(mcu::InterruptPriority(10), mcu::InterruptPriority(15));
 	can1.enableInterrupts();
 
 	cli::print_blocking("done");

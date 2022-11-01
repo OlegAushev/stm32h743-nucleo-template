@@ -13,6 +13,9 @@
 #include "settings.h"
 
 
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+
+
 /* UART2 */
 const mcu::uart::RxPinConfig Settings::Mcu::uart2RxPinConfig = {	
 	.port = CN9_USART_B_RX_PORT,
@@ -62,15 +65,16 @@ const mcu::can::Config Settings::Mcu::can1Config = {
 		.NominalTimeSeg1 = 13, /* NominalTimeSeg1 = Propagation_segment + Phase_segment_1 */
 		.NominalTimeSeg2 = 2,
 		.MessageRAMOffset = 0,
-		.StdFiltersNbr = 1,
+		.StdFiltersNbr = 0,
 		.ExtFiltersNbr = 0,
-		.RxFifo0ElmtsNbr = 8,
+		.RxFifo0ElmtsNbr = 64,
 		.RxFifo0ElmtSize = FDCAN_DATA_BYTES_8,
-		.RxFifo1ElmtsNbr = 0,
+		.RxFifo1ElmtsNbr = 64,
+		.RxFifo1ElmtSize = FDCAN_DATA_BYTES_8,
 		.RxBuffersNbr = 0,
 		.TxEventsNbr = 0,
 		.TxBuffersNbr = 0,
-		.TxFifoQueueElmtsNbr = 1,
+		.TxFifoQueueElmtsNbr = 32,
 		.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION,
 		.TxElmtSize = FDCAN_DATA_BYTES_8,				
 	}
@@ -99,16 +103,17 @@ const mcu::can::Config Settings::Mcu::can2Config = {
 		.NominalSyncJumpWidth = 1,
 		.NominalTimeSeg1 = 13, /* NominalTimeSeg1 = Propagation_segment + Phase_segment_1 */
 		.NominalTimeSeg2 = 2,
-		.MessageRAMOffset = 0,
-		.StdFiltersNbr = 1,
+		.MessageRAMOffset = 1280,
+		.StdFiltersNbr = 0,
 		.ExtFiltersNbr = 0,
-		.RxFifo0ElmtsNbr = 8,
+		.RxFifo0ElmtsNbr = 64,
 		.RxFifo0ElmtSize = FDCAN_DATA_BYTES_8,
-		.RxFifo1ElmtsNbr = 0,
+		.RxFifo1ElmtsNbr = 64,
+		.RxFifo1ElmtSize = FDCAN_DATA_BYTES_8,
 		.RxBuffersNbr = 0,
 		.TxEventsNbr = 0,
 		.TxBuffersNbr = 0,
-		.TxFifoQueueElmtsNbr = 1,
+		.TxFifoQueueElmtsNbr = 32,
 		.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION,
 		.TxElmtSize = FDCAN_DATA_BYTES_8,				
 	}

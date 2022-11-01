@@ -154,6 +154,7 @@ public:
 
 		/* Initialize FDCAN */
 		m_handle.Init = cfg.init;
+		m_handle.Init.StdFiltersNbr = rxFilters.size();	// by default - 0
 		if (HAL_FDCAN_Init(&m_handle) != HAL_OK)
 		{
 			fatal_error("CAN module initialization failed");
@@ -163,17 +164,10 @@ public:
 
 
 		/* Configure Rx filter */
-		/*FDCAN_FilterTypeDef sFilterConfig;
-		sFilterConfig.IdType = FDCAN_STANDARD_ID;
-		sFilterConfig.FilterIndex = 0;
-		sFilterConfig.FilterType = FDCAN_FILTER_MASK;
-		sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
-		sFilterConfig.FilterID1 = 0x321;
-		sFilterConfig.FilterID2 = 0x7FF;
-		if (HAL_FDCAN_ConfigFilter(&m_handle, &sFilterConfig) != HAL_OK)
-		{
-			fatal_error("CAN module Rx filter configuration failed");
-		}*/
+		//if (HAL_FDCAN_ConfigFilter(&m_handle, &sFilterConfig) != HAL_OK)
+		//{
+		//	fatal_error("CAN module Rx filter configuration failed");
+		//}
 
 
 
@@ -255,25 +249,32 @@ public:
 	}
 
 	/* INTERRUPTS */
-private:
-	static inline std::function<void(can_frame)> onFrameReceived;
 public:
+	static inline std::function<void(can_frame)> onFrameReceived = [](auto){ emb::fatal_error("uninitialized callback"); };
+	
 	/**
 	 * @brief 
 	 * 
-	 * @param t_onFrameReceived 
-	 * @param priority 
+	 * @param activeInterrupts combination of @arg FDCAN_Interrupts
 	 */
-	void initRxInterrupt(std::function<void(can_frame)> t_onFrameReceived, InterruptPriority priority)
+	void enablePeripheralInterrupts(uint32_t activeInterrupts)
 	{
-		onFrameReceived = t_onFrameReceived;
-
-		if (HAL_FDCAN_ActivateNotification(&m_handle, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
+		if (HAL_FDCAN_ActivateNotification(&m_handle, activeInterrupts, 0) != HAL_OK)
 		{
 			emb::fatal_error("CAN interrupt initialization failed");
 		}
-		HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, priority.value(), 0);
-		HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);
+	}
+
+	/**
+	 * @brief Set interrupt priorities
+	 * 
+	 * @param line0Priority 
+	 * @param line1Priority 
+	 */
+	void setInterruptPriority(InterruptPriority line0Priority, InterruptPriority line1Priority)
+	{
+		HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, line0Priority.value(), 0);
+		HAL_NVIC_SetPriority(FDCAN1_IT1_IRQn, line1Priority.value(), 0);
 	}
 
 	/**
@@ -283,6 +284,7 @@ public:
 	void enableInterrupts()
 	{
 		HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);
+		HAL_NVIC_EnableIRQ(FDCAN1_IT1_IRQn);
 	}
 
 	/**
@@ -292,6 +294,7 @@ public:
 	void disableInterrupts()
 	{
 		HAL_NVIC_DisableIRQ(FDCAN1_IT0_IRQn);
+		HAL_NVIC_DisableIRQ(FDCAN1_IT1_IRQn);
 	}
 };
 
