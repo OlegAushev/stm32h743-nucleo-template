@@ -76,13 +76,21 @@ protected:
 };
 
 
+/// @brief 
+enum class Peripheral
+{
+	FDCAN_1,
+	FDCAN_2
+};
+
+
 /**
  * @brief 
  * 
  * @tparam Module 
  */
-template <unsigned int ModuleId>
-class Module : public ModuleBase, private emb::noncopyable, public emb::irq_singleton<Module<ModuleId>>
+template <Peripheral Instance>
+class Module : public ModuleBase, private emb::noncopyable, public emb::interrupt_invoker<Module<Instance>>
 {
 	friend void ::HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef*, uint32_t);
 private:
@@ -114,11 +122,8 @@ public:
 	 */
 	Module(const RxPinConfig& rxPinCfg, const TxPinConfig& txPinCfg, const Config& cfg,
 		std::vector<FDCAN_FilterTypeDef>& rxFilters)
-		: emb::irq_singleton<Module<ModuleId>>(this)
+		: emb::interrupt_invoker<Module<Instance>>(this)
 	{
-
-		static_assert(ModuleId == 1 || ModuleId == 2);
-
 		m_rxPin.init({
 			.port = rxPinCfg.port,
 			.pin = {
@@ -141,8 +146,8 @@ public:
 			},
 			.activeState = emb::PinActiveState::HIGH});
 
-		if constexpr (ModuleId == 1)		{ m_handle.Instance = FDCAN1; }
-		else if constexpr (ModuleId == 2)	{ m_handle.Instance = FDCAN2; }
+		if constexpr (Instance == Peripheral::FDCAN_1)		{ m_handle.Instance = FDCAN1; }
+		else if constexpr (Instance == Peripheral::FDCAN_2)	{ m_handle.Instance = FDCAN2; }
 		else { fatal_error("invalid CAN module"); }
 
 		enableClock();

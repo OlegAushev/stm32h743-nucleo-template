@@ -135,7 +135,7 @@ int main()
 	cli::print_blocking("configure CAN1 module... ");
 
 	std::vector<FDCAN_FilterTypeDef> can1RxFilters;
-	mcu::can::Module<1> can1(
+	mcu::can::Module<mcu::can::Peripheral::FDCAN_1> can1(
 			settings.mcu.can1RxPinConfig,
 			settings.mcu.can1TxPinConfig,
 			settings.mcu.can1Config,
@@ -147,7 +147,7 @@ int main()
 	cli::print_blocking("configure CAN2 module... ");
 
 	std::vector<FDCAN_FilterTypeDef> can2RxFilters;
-	mcu::can::Module<2> can2(
+	mcu::can::Module<mcu::can::Peripheral::FDCAN_2> can2(
 			settings.mcu.can2RxPinConfig,
 			settings.mcu.can2TxPinConfig,
 			settings.mcu.can2Config,

@@ -71,13 +71,11 @@ protected:
 	monostate()
 	{
 		assert(s_initialized);
-		if (!s_initialized) { fatal_error("uninitialized monostate class"); }
 	}
 
 	static void set_initialized()
 	{
 		assert(!s_initialized);
-		if (s_initialized) { fatal_error("repeated initialization of monostate class"); }
 		s_initialized = true;
 	}
 public:
@@ -91,30 +89,28 @@ public:
  * @tparam T 
  */
 template <class T>
-class irq_singleton
+class interrupt_invoker
 {
 private:
 	static T* s_instance;
 	static bool s_initialized;
 protected:
-	irq_singleton(T* self)
+	interrupt_invoker(T* self)
 	{
 		assert(!s_initialized);
-		if (s_initialized) while (1) {}
 		s_instance = self;
 		s_initialized = true;
 	}
 public:
-	static T* instance()
+	static T& instance()
 	{
 		assert(s_initialized);
-		if (!s_initialized) while (1) {}
-		return s_instance;
+		return *s_instance;
 	}
 
 	static bool initialized() { return s_initialized; }
 
-	virtual ~irq_singleton()
+	virtual ~interrupt_invoker()
 	{
 		s_initialized = false;
 		s_instance = static_cast<T*>(NULL);
@@ -122,9 +118,9 @@ public:
 };
 
 template <class T>
-T* irq_singleton<T>::s_instance = static_cast<T*>(NULL);
+T* interrupt_invoker<T>::s_instance = static_cast<T*>(NULL);
 template <class T>
-bool irq_singleton<T>::s_initialized = false;
+bool interrupt_invoker<T>::s_initialized = false;
 
 
 } // namespace emb
