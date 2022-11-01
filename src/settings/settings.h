@@ -33,10 +33,12 @@ public:
 		
 		static const mcu::can::RxPinConfig can1RxPinConfig;
 		static const mcu::can::TxPinConfig can1TxPinConfig;
+		static std::vector<FDCAN_FilterTypeDef> can1RxFilters;
 		static const mcu::can::Config can1Config;
 
 		static const mcu::can::RxPinConfig can2RxPinConfig;
 		static const mcu::can::TxPinConfig can2TxPinConfig;
+		static std::vector<FDCAN_FilterTypeDef> can2RxFilters;
 		static const mcu::can::Config can2Config;
 	} mcu;
 };

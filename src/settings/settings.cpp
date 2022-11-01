@@ -53,6 +53,15 @@ const mcu::can::TxPinConfig Settings::Mcu::can1TxPinConfig = {
 	.pin = CN9_CAN1_TX_PIN,
 	.afSelection = CN9_CAN1_TX_AF
 };
+FDCAN_FilterTypeDef can1RxFilter1 = {
+	.IdType = FDCAN_STANDARD_ID,
+	.FilterIndex = 0,
+	.FilterType = FDCAN_FILTER_MASK,
+	.FilterConfig = FDCAN_FILTER_TO_RXFIFO0,
+	.FilterID1 = 0x000,
+	.FilterID2 = 0x000,
+};
+std::vector<FDCAN_FilterTypeDef> Settings::Mcu::can1RxFilters = {can1RxFilter1};
 const mcu::can::Config Settings::Mcu::can1Config = {
 	.init = {
 		.FrameFormat = FDCAN_FRAME_CLASSIC,
@@ -92,6 +101,7 @@ const mcu::can::TxPinConfig Settings::Mcu::can2TxPinConfig = {
 	.pin = CN12_CAN2_TX_PIN,
 	.afSelection = CN12_CAN2_TX_AF
 };
+std::vector<FDCAN_FilterTypeDef> Settings::Mcu::can2RxFilters;
 const mcu::can::Config Settings::Mcu::can2Config = {
 	.init = {
 		.FrameFormat = FDCAN_FRAME_CLASSIC,

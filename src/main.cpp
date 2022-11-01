@@ -133,33 +133,11 @@ int main()
 	/* === CAN1 === */
 	cli::nextline_blocking();
 	cli::print_blocking("configure CAN1 module... ");
-
-	std::vector<FDCAN_FilterTypeDef> can1RxFilters;
-
-	FDCAN_FilterTypeDef filter1 = {
-		.IdType = FDCAN_STANDARD_ID,
-		.FilterIndex = 0,
-		.FilterType = FDCAN_FILTER_MASK,
-		.FilterConfig = FDCAN_FILTER_TO_RXFIFO0,
-		.FilterID1 = 0x123,
-		.FilterID2 = 0x7FF,
-	};
-	FDCAN_FilterTypeDef filter2 = {
-		.IdType = FDCAN_STANDARD_ID,
-		.FilterIndex = 1,
-		.FilterType = FDCAN_FILTER_MASK,
-		.FilterConfig = FDCAN_FILTER_TO_RXFIFO1,
-		.FilterID1 = 0x124,
-		.FilterID2 = 0x7FF,
-	};
-	can1RxFilters.push_back(filter1);
-	can1RxFilters.push_back(filter2);
-
 	mcu::can::Module<mcu::can::Peripheral::FDCAN_1> can1(
 			settings.mcu.can1RxPinConfig,
 			settings.mcu.can1TxPinConfig,
 			settings.mcu.can1Config,
-			can1RxFilters);
+			settings.mcu.can1RxFilters);
 	
 	
 	/* === CAN2 === */
@@ -171,7 +149,7 @@ int main()
 			settings.mcu.can2RxPinConfig,
 			settings.mcu.can2TxPinConfig,
 			settings.mcu.can2Config,
-			can2RxFilters);
+			settings.mcu.can2RxFilters);
 
 	cli::print_blocking("done");
 
