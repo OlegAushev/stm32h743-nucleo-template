@@ -18,6 +18,7 @@
 #include "emb/emb_core.h"
 
 #include "../mcu_def.h"
+#include "../system/mcu_system.h"
 
 
 extern "C" void SysTick_Handler();
@@ -26,6 +27,19 @@ extern "C" void SysTick_Handler();
 namespace mcu {
 
 
+/**
+ * @brief Initializes device clock.
+ * 
+ * @param (none)
+ * @return (none) 
+ */
+void initDeviceClock();
+
+
+/**
+ * @brief 
+ * 
+ */
 class SystemClock : private emb::noncopyable, public emb::monostate<SystemClock>
 {
 	friend void ::SysTick_Handler();

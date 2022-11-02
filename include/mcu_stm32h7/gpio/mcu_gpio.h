@@ -17,6 +17,7 @@
 #pragma once
 
 
+#include <algorithm>
 #include <array>
 #include <functional>
 #include "emb/emb_core.h"
@@ -46,25 +47,36 @@ struct Config
 };
 
 
-/**
- * @brief Enables all gpio ports clocks.
- * 
- * @param (none)
- * @return (none)
- */
-void enableClocks();
+namespace detail {
+	inline constexpr std::array<GPIO_TypeDef*, 11> gpioPorts = {GPIOA, GPIOB, GPIOC, GPIOD, GPIOE, GPIOF, GPIOG, GPIOH, GPIOI, GPIOJ, GPIOK};
+	inline std::array<std::function<void(void)>, 11> gpioClkEnableFuncs = {
+		[](){__HAL_RCC_GPIOA_CLK_ENABLE();},
+		[](){__HAL_RCC_GPIOB_CLK_ENABLE();},
+		[](){__HAL_RCC_GPIOC_CLK_ENABLE();},
+		[](){__HAL_RCC_GPIOD_CLK_ENABLE();},
+		[](){__HAL_RCC_GPIOE_CLK_ENABLE();},
+		[](){__HAL_RCC_GPIOF_CLK_ENABLE();},
+		[](){__HAL_RCC_GPIOG_CLK_ENABLE();},
+		[](){__HAL_RCC_GPIOH_CLK_ENABLE();},
+		[](){__HAL_RCC_GPIOI_CLK_ENABLE();},
+		[](){__HAL_RCC_GPIOJ_CLK_ENABLE();},
+		[](){__HAL_RCC_GPIOK_CLK_ENABLE();}	
+	};
+}
 
 
 /*============================================================================*/
 /**
  * @brief GPIO generic base class.
  */
-class Gpio
+class GpioBase
 {
+private:
+	static inline std::array<bool, 11> m_isClockEnabled{};
 protected:
 	Config m_cfg;
 	bool m_initialized;
-	Gpio() : m_initialized(false) {}
+	GpioBase() : m_initialized(false) {}
 public:
 	/**
 	 * @brief Initializes GPIO pin.
@@ -74,6 +86,14 @@ public:
 	 */
 	void init(const Config& cfg)
 	{
+		// enable port clock
+		auto portIndex = std::distance(detail::gpioPorts.begin(), std::find(detail::gpioPorts.begin(), detail::gpioPorts.end(), cfg.port));
+		if (!m_isClockEnabled[portIndex])
+		{
+			detail::gpioClkEnableFuncs[portIndex]();
+			m_isClockEnabled[portIndex] = true;
+		}	
+
 		m_cfg = cfg;
 		HAL_GPIO_Init(m_cfg.port, &m_cfg.pin);
 		m_initialized = true;
@@ -135,7 +155,7 @@ public:
 /**
  * @brief GPIO input pin class.
  */
-class Input : public emb::IGpioInput, public Gpio
+class Input : public emb::IGpioInput, public GpioBase
 {
 	friend void ::EXTI0_IRQHandler();
 	friend void ::EXTI1_IRQHandler();
@@ -185,7 +205,12 @@ public:
 	}
 private:
 	IRQn_Type m_irqn{NonMaskableInt_IRQn};	// use NonMaskableInt_IRQn as value for not initialized interrupt
-	static std::array<std::function<void(void)>, 16> onInterrupt;
+	static inline std::array<std::function<void(void)>, 16> onInterrupt = {
+		emb::invalid_function, emb::invalid_function, emb::invalid_function, emb::invalid_function,
+		emb::invalid_function, emb::invalid_function, emb::invalid_function, emb::invalid_function,
+		emb::invalid_function, emb::invalid_function, emb::invalid_function, emb::invalid_function,
+		emb::invalid_function, emb::invalid_function, emb::invalid_function, emb::invalid_function,
+	};
 public:
 	/**
 	 * @brief Initializes interrupt.
@@ -260,7 +285,7 @@ public:
 /**
  * @brief GPIO output pin class.
  */
-class Output : public emb::IGpioOutput, public Gpio
+class Output : public emb::IGpioOutput, public GpioBase
 {
 public:
 	/**

@@ -44,7 +44,6 @@ int main()
 	mcu::enableDCache();
 	mcu::initDeviceClock();
 	mcu::delay_ms(500);
-	mcu::gpio::enableClocks();
 
 
 	/* === SETTINGS === */

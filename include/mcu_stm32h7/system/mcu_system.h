@@ -32,15 +32,6 @@ namespace mcu {
 
 
 /**
- * @brief Initializes device clock.
- * 
- * @param (none)
- * @return (none) 
- */
-void initDeviceClock();
-
-
-/**
  * @brief Resets device.
  * 
  */
