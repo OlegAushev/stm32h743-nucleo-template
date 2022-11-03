@@ -139,7 +139,7 @@ public:
 	 * @param rxFilters 
 	 */
 	Module(const RxPinConfig& rxPinCfg, const TxPinConfig& txPinCfg, const Config& cfg,
-		std::vector<FDCAN_FilterTypeDef>& rxFilters)
+		const std::vector<FDCAN_FilterTypeDef>& rxFilters)
 		: emb::interrupt_invoker<Module<Instance>>(this)
 	{
 		m_rxPin.init({
@@ -179,7 +179,7 @@ public:
 		}
 
 		/* Configure Rx filters */
-		for (auto& filter : rxFilters)
+		for (auto filter : rxFilters)
 		{
 			if (HAL_FDCAN_ConfigFilter(&m_handle, &filter) != HAL_OK)
 			{
