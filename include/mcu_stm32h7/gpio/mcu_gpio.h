@@ -47,22 +47,26 @@ struct Config
 };
 
 
-namespace detail {
-	inline constexpr std::array<GPIO_TypeDef*, 11> gpioPorts = {GPIOA, GPIOB, GPIOC, GPIOD, GPIOE, GPIOF, GPIOG, GPIOH, GPIOI, GPIOJ, GPIOK};
-	inline std::array<std::function<void(void)>, 11> gpioClkEnableFuncs = {
-		[](){__HAL_RCC_GPIOA_CLK_ENABLE();},
-		[](){__HAL_RCC_GPIOB_CLK_ENABLE();},
-		[](){__HAL_RCC_GPIOC_CLK_ENABLE();},
-		[](){__HAL_RCC_GPIOD_CLK_ENABLE();},
-		[](){__HAL_RCC_GPIOE_CLK_ENABLE();},
-		[](){__HAL_RCC_GPIOF_CLK_ENABLE();},
-		[](){__HAL_RCC_GPIOG_CLK_ENABLE();},
-		[](){__HAL_RCC_GPIOH_CLK_ENABLE();},
-		[](){__HAL_RCC_GPIOI_CLK_ENABLE();},
-		[](){__HAL_RCC_GPIOJ_CLK_ENABLE();},
-		[](){__HAL_RCC_GPIOK_CLK_ENABLE();}	
-	};
-}
+namespace impl {
+
+
+inline constexpr std::array<GPIO_TypeDef*, 11> gpioPorts = {GPIOA, GPIOB, GPIOC, GPIOD, GPIOE, GPIOF, GPIOG, GPIOH, GPIOI, GPIOJ, GPIOK};
+inline std::array<std::function<void(void)>, 11> gpioClkEnableFuncs = {
+	[](){__HAL_RCC_GPIOA_CLK_ENABLE();},
+	[](){__HAL_RCC_GPIOB_CLK_ENABLE();},
+	[](){__HAL_RCC_GPIOC_CLK_ENABLE();},
+	[](){__HAL_RCC_GPIOD_CLK_ENABLE();},
+	[](){__HAL_RCC_GPIOE_CLK_ENABLE();},
+	[](){__HAL_RCC_GPIOF_CLK_ENABLE();},
+	[](){__HAL_RCC_GPIOG_CLK_ENABLE();},
+	[](){__HAL_RCC_GPIOH_CLK_ENABLE();},
+	[](){__HAL_RCC_GPIOI_CLK_ENABLE();},
+	[](){__HAL_RCC_GPIOJ_CLK_ENABLE();},
+	[](){__HAL_RCC_GPIOK_CLK_ENABLE();}	
+};
+
+
+} // namespace impl
 
 
 /*============================================================================*/
@@ -87,10 +91,10 @@ public:
 	void init(const Config& cfg)
 	{
 		// enable port clock
-		auto portIndex = std::distance(detail::gpioPorts.begin(), std::find(detail::gpioPorts.begin(), detail::gpioPorts.end(), cfg.port));
+		auto portIndex = std::distance(impl::gpioPorts.begin(), std::find(impl::gpioPorts.begin(), impl::gpioPorts.end(), cfg.port));
 		if (!m_isClockEnabled[portIndex])
 		{
-			detail::gpioClkEnableFuncs[portIndex]();
+			impl::gpioClkEnableFuncs[portIndex]();
 			m_isClockEnabled[portIndex] = true;
 		}	
 

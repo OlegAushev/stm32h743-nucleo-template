@@ -33,9 +33,21 @@ namespace mcu {
 namespace can {
 
 
-constexpr bool STRICT_ERROR_CONTROL = true;
+inline constexpr bool STRICT_ERROR_CONTROL = true;
 
 
+/// @brief 
+enum class Peripheral
+{
+	FDCAN_1,
+	FDCAN_2
+};
+
+
+/**
+ * @brief 
+ * 
+ */
 struct RxPinConfig
 {
 	GPIO_TypeDef* port;
@@ -44,6 +56,10 @@ struct RxPinConfig
 };
 
 
+/**
+ * @brief 
+ * 
+ */
 struct TxPinConfig
 {
 	GPIO_TypeDef* port;
@@ -52,10 +68,17 @@ struct TxPinConfig
 };
 
 
+/**
+ * @brief 
+ * 
+ */
 struct Config
 {
 	FDCAN_InitTypeDef init;
 };
+
+
+namespace impl {
 
 
 /**
@@ -76,21 +99,16 @@ protected:
 };
 
 
-/// @brief 
-enum class Peripheral
-{
-	FDCAN_1,
-	FDCAN_2
-};
+} // namespace impl
 
 
 /**
  * @brief 
  * 
- * @tparam Module 
+ * @tparam Instance 
  */
 template <Peripheral Instance>
-class Module : public ModuleBase, private emb::noncopyable, public emb::interrupt_invoker<Module<Instance>>
+class Module : public impl::ModuleBase, private emb::noncopyable, public emb::interrupt_invoker<Module<Instance>>
 {
 	friend void ::HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef*, uint32_t);
 private:

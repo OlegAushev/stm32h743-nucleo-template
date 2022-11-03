@@ -28,6 +28,19 @@ namespace mcu {
 namespace adc {
 
 
+/// @brief 
+enum class Peripheral
+{
+	ADC_1,
+	ADC_2,
+	ADC_3
+};
+
+
+/**
+ * @brief 
+ * 
+ */
 struct PinConfig
 {
 	GPIO_TypeDef* port;
@@ -35,6 +48,10 @@ struct PinConfig
 };
 
 
+/**
+ * @brief 
+ * 
+ */
 struct Config
 {
 	ADC_InitTypeDef init;
@@ -42,17 +59,39 @@ struct Config
 };
 
 
+namespace impl {
+
+
+inline constexpr std::array<ADC_TypeDef*, 3> adcModules = {ADC1, ADC2, ADC3};
+inline std::array<std::function<void(void)>, 3> adcClkEnableFuncs = {
+	[](){__HAL_RCC_ADC12_CLK_ENABLE();},
+	[](){__HAL_RCC_ADC12_CLK_ENABLE();},
+	[](){__HAL_RCC_ADC3_CLK_ENABLE();}	
+};
+
+
+/**
+ * @brief 
+ * 
+ */
+class ModuleBase
+{
+
+};
+
+
+} // namespace impl
 
 
 
-namespace detail {
-	inline constexpr std::array<ADC_TypeDef*, 3> adcModules = {ADC1, ADC2, ADC3};
-	inline std::array<std::function<void(void)>, 3> adcClkEnableFuncs = {
-		[](){__HAL_RCC_ADC12_CLK_ENABLE();},
-		[](){__HAL_RCC_ADC12_CLK_ENABLE();},
-		[](){__HAL_RCC_ADC3_CLK_ENABLE();}	
-	};
-}
+template <Peripheral Instance>
+class Module : public impl::ModuleBase, private emb::noncopyable, public emb::interrupt_invoker<Module<Instance>>
+{
+
+};
+
+
+
 
 
 

@@ -31,29 +31,6 @@ namespace mcu {
 namespace uart {
 
 
-struct RxPinConfig
-{
-	GPIO_TypeDef* port;
-	uint32_t pin;
-	uint32_t afSelection;
-};
-
-
-struct TxPinConfig
-{
-	GPIO_TypeDef* port;
-	uint32_t pin;
-	uint32_t afSelection;
-};
-
-
-struct Config
-{
-	UART_InitTypeDef init;
-	UART_AdvFeatureInitTypeDef advanced;
-};
-
-
 /// @brief 
 enum class Peripheral
 {
@@ -68,6 +45,46 @@ enum class Peripheral
 };
 
 
+/**
+ * @brief 
+ * 
+ */
+struct RxPinConfig
+{
+	GPIO_TypeDef* port;
+	uint32_t pin;
+	uint32_t afSelection;
+};
+
+
+/**
+ * @brief 
+ * 
+ */
+struct TxPinConfig
+{
+	GPIO_TypeDef* port;
+	uint32_t pin;
+	uint32_t afSelection;
+};
+
+
+/**
+ * @brief 
+ * 
+ */
+struct Config
+{
+	UART_InitTypeDef init;
+	UART_AdvFeatureInitTypeDef advanced;
+};
+
+
+/**
+ * @brief 
+ * 
+ * @tparam Instance 
+ */
 template <Peripheral Instance>
 class Module : public emb::IUart, private emb::noncopyable, public emb::interrupt_invoker<Module<Instance>>
 {
