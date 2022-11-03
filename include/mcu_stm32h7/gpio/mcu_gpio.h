@@ -66,10 +66,6 @@ inline std::array<std::function<void(void)>, 11> gpioClkEnableFuncs = {
 };
 
 
-} // namespace impl
-
-
-/*============================================================================*/
 /**
  * @brief GPIO generic base class.
  */
@@ -91,10 +87,10 @@ public:
 	void init(const Config& cfg)
 	{
 		// enable port clock
-		auto portIndex = std::distance(impl::gpioPorts.begin(), std::find(impl::gpioPorts.begin(), impl::gpioPorts.end(), cfg.port));
+		auto portIndex = std::distance(gpioPorts.begin(), std::find(gpioPorts.begin(), gpioPorts.end(), cfg.port));
 		if (!m_isClockEnabled[portIndex])
 		{
-			impl::gpioClkEnableFuncs[portIndex]();
+			gpioClkEnableFuncs[portIndex]();
 			m_isClockEnabled[portIndex] = true;
 		}	
 
@@ -155,11 +151,14 @@ public:
 };
 
 
+} // namespace impl
+
+
 /*============================================================================*/
 /**
  * @brief GPIO input pin class.
  */
-class Input : public emb::IGpioInput, public GpioBase
+class Input : public emb::IGpioInput, public impl::GpioBase
 {
 	friend void ::EXTI0_IRQHandler();
 	friend void ::EXTI1_IRQHandler();
@@ -289,7 +288,7 @@ public:
 /**
  * @brief GPIO output pin class.
  */
-class Output : public emb::IGpioOutput, public GpioBase
+class Output : public emb::IGpioOutput, public impl::GpioBase
 {
 public:
 	/**

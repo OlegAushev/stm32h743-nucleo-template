@@ -63,11 +63,6 @@ namespace impl {
 
 
 inline constexpr std::array<ADC_TypeDef*, 3> adcModules = {ADC1, ADC2, ADC3};
-inline std::array<std::function<void(void)>, 3> adcClkEnableFuncs = {
-	[](){__HAL_RCC_ADC12_CLK_ENABLE();},
-	[](){__HAL_RCC_ADC12_CLK_ENABLE();},
-	[](){__HAL_RCC_ADC3_CLK_ENABLE();}	
-};
 
 
 /**
@@ -76,7 +71,24 @@ inline std::array<std::function<void(void)>, 3> adcClkEnableFuncs = {
  */
 class ModuleBase
 {
-
+private:
+	static inline std::array<bool, 2> m_isClockEnabled{};
+public:
+	void enableClock(ADC_TypeDef* adc)
+	{
+		if ((adc == ADC1) || (adc == ADC2))
+		{
+			__HAL_RCC_ADC12_CLK_ENABLE();
+		}
+		else if (adc == ADC3)
+		{
+			__HAL_RCC_ADC3_CLK_ENABLE();
+		}
+		else
+		{
+			fatal_error("invalid ADC module");
+		}
+	}
 };
 
 
