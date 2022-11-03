@@ -250,7 +250,7 @@ public:
 	 * @param interrruptList 
 	 * @param interruptLine 
 	 */
-	void configureInterrupts(uint32_t interrruptList, uint32_t interruptLine)
+	void initInterrupts(uint32_t interrruptList, uint32_t interruptLine)
 	{
 		if (HAL_FDCAN_ConfigInterruptLines(&m_handle, interrruptList, interruptLine) != HAL_OK)
 		{

@@ -166,8 +166,8 @@ int main()
 	};
 	can1.onFifo0FrameReceived = canLoop;
 	//can1.onFifo1WatermarkReached = ;
-	can1.configureInterrupts(FDCAN_IT_RX_FIFO0_NEW_MESSAGE, FDCAN_INTERRUPT_LINE0);
-	can1.configureInterrupts(FDCAN_IT_RX_FIFO1_WATERMARK, FDCAN_INTERRUPT_LINE1);
+	can1.initInterrupts(FDCAN_IT_RX_FIFO0_NEW_MESSAGE, FDCAN_INTERRUPT_LINE0);
+	can1.initInterrupts(FDCAN_IT_RX_FIFO1_WATERMARK, FDCAN_INTERRUPT_LINE1);
 	can1.setFifoWatermark(FDCAN_CFG_RX_FIFO1, 4);
 	can1.setInterruptPriority(mcu::InterruptPriority(2), mcu::InterruptPriority(15));
 	
