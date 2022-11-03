@@ -12,6 +12,7 @@
 
 #include "emb/emb_core.h"
 
+#include "mcu_stm32h7/adc/mcu_adc.h"
 #include "mcu_stm32h7/uart/mcu_uart.h"
 #include "mcu_stm32h7/can/mcu_can.h"
 #include "bsp_h743_nucleo/bsp_h743_nucleo_def.h"
@@ -40,7 +41,14 @@ public:
 		static const mcu::can::TxPinConfig can2TxPinConfig;
 		static const std::vector<FDCAN_FilterTypeDef> can2RxFilters;
 		static const mcu::can::Config can2Config;
+
+		static const mcu::adc::Config adc3Config;
 	} mcu;
+
+	struct AdcChannels
+	{
+		static const ADC_ChannelConfTypeDef internalTempChannelConfig;
+	} adcChannels;
 };
 
 

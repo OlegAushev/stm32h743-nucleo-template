@@ -79,10 +79,12 @@ public:
 		if ((adc == ADC1) || (adc == ADC2))
 		{
 			__HAL_RCC_ADC12_CLK_ENABLE();
+			m_isClockEnabled[0] = true;
 		}
 		else if (adc == ADC3)
 		{
 			__HAL_RCC_ADC3_CLK_ENABLE();
+			m_isClockEnabled[1] = true;
 		}
 		else
 		{
@@ -122,7 +124,14 @@ public:
 		{
 			fatal_error("ADC module initialization failed");
 		}
+	}
 
+	/**
+	 * @brief 
+	 * 
+	 */
+	void calibrate()
+	{
 		/* Run the ADC calibration in single-ended mode */
 		if (HAL_ADCEx_Calibration_Start(&m_handle, ADC_CALIB_OFFSET, ADC_SINGLE_ENDED) != HAL_OK)
 		{
@@ -180,9 +189,19 @@ public:
 	/**
 	 * @brief 
 	 * 
+	 * @return HalStatus 
+	 */
+	HalStatus pollForConversion()
+	{
+		return HAL_ADC_PollForConversion(&m_handle, 0);
+	}
+	
+	/**
+	 * @brief 
+	 * 
 	 * @return uint32_t 
 	 */
-	uint32_t valueRegular() const
+	uint32_t readRegular()
 	{
 		return HAL_ADC_GetValue(&m_handle);
 	}
@@ -193,7 +212,7 @@ public:
 	 * @param injectedRank 
 	 * @return uint32_t 
 	 */
-	uint32_t valueInjected(uint32_t injectedRank) const
+	uint32_t readInjected(uint32_t injectedRank)
 	{
 		return HAL_ADCEx_InjectedGetValue(&m_handle, injectedRank);
 	}

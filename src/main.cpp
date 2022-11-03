@@ -18,6 +18,7 @@
 #include "mcu_stm32h7/uart/mcu_uart.h"
 #include "mcu_stm32h7/clock/mcu_clock.h"
 #include "mcu_stm32h7/can/mcu_can.h"
+#include "mcu_stm32h7/adc/mcu_adc.h"
 
 #include "bsp_h743_nucleo/bsp_h743_nucleo_def.h"
 #include "bsp_h743_nucleo/leds/leds.h"
@@ -173,6 +174,18 @@ int main()
 	
 	cli::print_blocking("done");
 
+	/* === ADC === */
+	cli::nextline_blocking();
+	cli::print_blocking("configure ADC modules and channels... ");
+
+	mcu::adc::Module<mcu::adc::Peripheral::ADC_3> adc3(settings.mcu.adc3Config);
+	adc3.addInternalChannel(settings.adcChannels.internalTempChannelConfig);
+	adc3.calibrate();
+	adc3.startRegular();
+
+	cli::print_blocking("done");
+
+
 	/* === CLOCK TASKS === */
 	cli::nextline_blocking();
 	cli::print_blocking("configure system clock periodic tasks... ");
@@ -210,6 +223,12 @@ int main()
 	{
 		mcu::SystemClock::runTasks();
 		cliServer.run();
+
+		if (adc3.pollForConversion() == mcu::HalStatus::HAL_OK)
+		{
+			static int32_t mcuTemp = __LL_ADC_CALC_TEMPERATURE(3300, adc3.readRegular(), LL_ADC_RESOLUTION_16B);
+			adc3.startRegular();
+		}
 	}
 }
 
