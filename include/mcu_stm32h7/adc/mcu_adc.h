@@ -99,7 +99,25 @@ public:
 template <Peripheral Instance>
 class Module : public impl::ModuleBase, private emb::noncopyable, public emb::interrupt_invoker<Module<Instance>>
 {
+private:
+	ADC_HandleTypeDef m_handle;
+public:
+	Module(const Config& cfg)
+		: emb::interrupt_invoker<Module<Instance>>(this)
+	{
+		if constexpr (Instance == Peripheral::ADC_1) { m_handle.Instance = ADC1; }
+		else if constexpr (Instance == Peripheral::ADC_2) { m_handle.Instance = ADC2; }
+		else if constexpr (Instance == Peripheral::ADC_3) { m_handle.Instance = ADC3; }
+		else { fatal_error("invalid ADC module"); }
 
+		enableClock(m_handle.Instance);
+
+		m_handle.Init = cfg.init;
+		if (HAL_ADC_Init(&m_handle) != HAL_OK)
+		{
+			fatal_error("ADC module initialization failed");
+		}
+	}
 };
 
 

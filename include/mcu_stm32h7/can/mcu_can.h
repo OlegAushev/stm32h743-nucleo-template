@@ -164,13 +164,13 @@ public:
 			},
 			.activeState = emb::PinActiveState::HIGH});
 
+		/* Initialize FDCAN */
 		if constexpr (Instance == Peripheral::FDCAN_1)		{ m_handle.Instance = FDCAN1; }
 		else if constexpr (Instance == Peripheral::FDCAN_2)	{ m_handle.Instance = FDCAN2; }
 		else { fatal_error("invalid CAN module"); }
-
+		
 		enableClock();
 
-		/* Initialize FDCAN */
 		m_handle.Init = cfg.init;
 		m_handle.Init.StdFiltersNbr = rxFilters.size();	// by default - 0
 		if (HAL_FDCAN_Init(&m_handle) != HAL_OK)
