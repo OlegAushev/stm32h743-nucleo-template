@@ -154,6 +154,32 @@ public:
 	/**
 	 * @brief 
 	 * 
+	 * @param channelCfg 
+	 */
+	void addInternalChannel(ADC_ChannelConfTypeDef channelCfg)
+	{
+		if (HAL_ADC_ConfigChannel(&m_handle, &channelCfg) != HAL_OK)
+		{
+			fatal_error("ADC internal channel initialization failed");
+		}
+	}
+
+
+	/**
+	 * @brief 
+	 * 
+	 */
+	void startRegular()
+	{
+		if (HAL_ADC_Start(&m_handle) != HAL_OK)
+		{
+			fatal_error("start regular ADC conversion failed");
+		}
+	}
+
+	/**
+	 * @brief 
+	 * 
 	 * @return uint32_t 
 	 */
 	uint32_t valueRegular() const
