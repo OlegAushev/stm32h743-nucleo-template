@@ -41,8 +41,8 @@ public:
 	IGpioInput() {}
 	virtual ~IGpioInput() {}
 
-	virtual emb::PinState read() const = 0;
-	virtual int readValue() const = 0;
+	virtual emb::PinState read() = 0;
+	virtual int readValue() = 0;
 };
 
 
@@ -55,11 +55,11 @@ public:
 	IGpioOutput() {}
 	virtual ~IGpioOutput() {}
 
-	virtual emb::PinState read() const = 0;
-	virtual int readValue() const = 0;
-	virtual void set(emb::PinState state = emb::PinState::ACTIVE) const = 0;
-	virtual void reset() const = 0;
-	virtual void toggle() const = 0;
+	virtual emb::PinState read() = 0;
+	virtual int readValue() = 0;
+	virtual void set(emb::PinState state = emb::PinState::ACTIVE) = 0;
+	virtual void reset() = 0;
+	virtual void toggle() = 0;
 };
 
 

@@ -102,6 +102,11 @@ class Module : public impl::ModuleBase, private emb::noncopyable, public emb::in
 private:
 	ADC_HandleTypeDef m_handle;
 public:
+	/**
+	 * @brief Construct a new Module object
+	 * 
+	 * @param cfg 
+	 */
 	Module(const Config& cfg)
 		: emb::interrupt_invoker<Module<Instance>>(this)
 	{
@@ -117,7 +122,59 @@ public:
 		{
 			fatal_error("ADC module initialization failed");
 		}
+
+		/* Run the ADC calibration in single-ended mode */
+		if (HAL_ADCEx_Calibration_Start(&m_handle, ADC_CALIB_OFFSET, ADC_SINGLE_ENDED) != HAL_OK)
+		{
+			fatal_error("ADC calibration failed");
+		}
 	}
+
+	/**
+	 * @brief 
+	 * 
+	 * @param pinCfg 
+	 * @param channelCfg 
+	 */
+	void addRegularChannel(PinConfig pinCfg, ADC_ChannelConfTypeDef channelCfg)
+	{
+		mcu::gpio::Input input({
+			.port = pinCfg.port,
+			.pin = {
+				.Pin = pinCfg.pin,
+				.Mode = GPIO_MODE_ANALOG,
+				.Pull = GPIO_NOPULL}});
+
+		if (HAL_ADC_ConfigChannel(&m_handle, &channelCfg) != HAL_OK)
+		{
+			fatal_error("ADC regular channel initialization failed");
+		}
+	}
+
+	/**
+	 * @brief 
+	 * 
+	 * @return uint32_t 
+	 */
+	uint32_t valueRegular() const
+	{
+		return HAL_ADC_GetValue(&m_handle);
+	}
+
+	/**
+	 * @brief 
+	 * 
+	 * @param injectedRank 
+	 * @return uint32_t 
+	 */
+	uint32_t valueInjected(uint32_t injectedRank) const
+	{
+		return HAL_ADCEx_InjectedGetValue(&m_handle, injectedRank);
+	}
+
+
+
+
 };
 
 

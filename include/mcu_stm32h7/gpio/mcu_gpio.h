@@ -187,7 +187,7 @@ public:
 	 * @param (none)
 	 * @return Pin state.
 	 */
-	virtual emb::PinState read() const override
+	virtual emb::PinState read() override
 	{
 		assert_param(m_initialized);
 		return static_cast<emb::PinState>(1
@@ -201,7 +201,7 @@ public:
 	 * @param (none)
 	 * @return int 
 	 */
-	virtual int readValue() const override
+	virtual int readValue() override
 	{
 		assert_param(m_initialized);
 		return static_cast<int>(HAL_GPIO_ReadPin(m_cfg.port, static_cast<uint16_t>(m_cfg.pin.Pin)));
@@ -311,7 +311,7 @@ public:
 	 * @param (none)
 	 * @return Pin state.
 	 */
-	virtual emb::PinState read() const override
+	virtual emb::PinState read() override
 	{
 		assert_param(m_initialized);
 		return static_cast<emb::PinState>(1
@@ -325,7 +325,7 @@ public:
 	 * @param (none)
 	 * @return int 
 	 */
-	virtual int readValue() const override
+	virtual int readValue() override
 	{
 		assert_param(m_initialized);
 		return static_cast<int>(HAL_GPIO_ReadPin(m_cfg.port, static_cast<uint16_t>(m_cfg.pin.Pin)));
@@ -336,7 +336,7 @@ public:
 	 * @param state pin state
 	 * @return (none)
 	 */
-	virtual void set(emb::PinState state = emb::PinState::ACTIVE) const override
+	virtual void set(emb::PinState state = emb::PinState::ACTIVE) override
 	{
 		assert_param(m_initialized);
 		HAL_GPIO_WritePin(m_cfg.port, static_cast<uint16_t>(m_cfg.pin.Pin),
@@ -348,7 +348,7 @@ public:
 	 * @param (none)
 	 * @return (none)
 	 */
-	virtual void reset() const override
+	virtual void reset() override
 	{
 		assert_param(m_initialized);
 		set(emb::PinState::INACTIVE);
@@ -359,7 +359,7 @@ public:
 	 * @param (none)
 	 * @return (none)
 	 */
-	virtual void toggle() const override
+	virtual void toggle() override
 	{
 		assert_param(m_initialized);
 		HAL_GPIO_TogglePin(m_cfg.port, static_cast<uint16_t>(m_cfg.pin.Pin));
