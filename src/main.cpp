@@ -19,6 +19,7 @@
 #include "mcu_stm32h7/clock/mcu_clock.h"
 #include "mcu_stm32h7/can/mcu_can.h"
 #include "mcu_stm32h7/adc/mcu_adc.h"
+#include "mcu_stm32h7/crc/mcu_crc.h"
 
 #include "bsp_h743_nucleo/bsp_h743_nucleo_def.h"
 #include "bsp_h743_nucleo/leds/leds.h"
@@ -182,6 +183,15 @@ int main()
 	adc3.addInternalChannel(settings.adcChannels.internalTempChannelConfig);
 	adc3.calibrate();
 	adc3.startRegular();
+
+	cli::print_blocking("done");
+
+
+	/* === CRC === */
+	cli::nextline_blocking();
+	cli::print_blocking("configure CRC module... ");
+
+	//mcu::crc::Module::instance().init({});
 
 	cli::print_blocking("done");
 

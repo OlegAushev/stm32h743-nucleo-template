@@ -73,6 +73,8 @@ protected:
 		assert(s_initialized);
 	}
 
+	~monostate() = default;
+
 	static void set_initialized()
 	{
 		assert(!s_initialized);
