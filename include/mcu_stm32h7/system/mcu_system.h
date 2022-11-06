@@ -97,7 +97,7 @@ public:
  */
 inline void enableICache() { SCB_EnableICache(); }
 
-
+ 
 /**
  * @brief 
  * 
@@ -117,6 +117,29 @@ inline void enableDCache() { SCB_EnableDCache(); }
  * 
  */
 inline void disableDCache() { SCB_DisableDCache(); }
+
+
+/**
+ * @brief 
+ * 
+ * @tparam AdcResolution 
+ * @param adcData 
+ * @return float 
+ */
+template <uint32_t AdcResolution>
+float calculateMcuTemperature(uint32_t adcData)
+{
+	if constexpr (AdcResolution == ADC_RESOLUTION_16B)
+	{
+		return float(int32_t(adcData) - int32_t(*TEMPSENSOR_CAL1_ADDR)) * (float(TEMPSENSOR_CAL2_TEMP) - float(TEMPSENSOR_CAL1_TEMP))
+				/ (int32_t(*TEMPSENSOR_CAL2_ADDR) - int32_t(*TEMPSENSOR_CAL1_ADDR)) + float(TEMPSENSOR_CAL1_TEMP); 
+	}
+	else static_assert(AdcResolution == ADC_RESOLUTION_16B);
+	return 0;
+}
+
+
+
 
 
 /// @}

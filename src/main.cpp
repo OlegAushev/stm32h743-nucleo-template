@@ -28,9 +28,18 @@
 #include "settings/settings.h"
 #include "cli/cli_server.h"
 #include "cli/shell/cli_shell.h"
+#include "sys/sysinfo/sysinfo.h"
 
 #include "build/generated/git_version.h"
 #include "tests/tests.h"
+
+
+
+
+mcu::SystemClock::TaskStatus taskLedHeartbeat();
+mcu::SystemClock::TaskStatus taskAcqMcuSysInfo();
+
+
 
 
 /**
@@ -200,19 +209,11 @@ int main()
 	cli::nextline_blocking();
 	cli::print_blocking("configure system clock periodic tasks... ");
 
-	auto taskLedHeartbeat = []()
-	{
-		const uint64_t periods[4] = {100, 100, 100, 700};
-		static size_t index = 0;
-
-		mcu::SystemClock::setTaskPeriod(0, periods[index]);
-		if ((index % 2) == 0) { bsp::ledGreen.set(); }
-		else { bsp::ledGreen.reset(); }
-		index = (index + 1) % 4;
-		return mcu::SystemClock::TaskStatus::SUCCESS;
-	};
 	mcu::SystemClock::registerTask(0, taskLedHeartbeat);
 	mcu::SystemClock::setTaskPeriod(0, 2000);
+
+	mcu::SystemClock::registerTask(1, taskAcqMcuSysInfo);
+	mcu::SystemClock::setTaskPeriod(1, 1000);
 
 	cli::print_blocking("done");
 
@@ -233,12 +234,6 @@ int main()
 	{
 		mcu::SystemClock::runTasks();
 		cliServer.run();
-
-		if (adc3.pollForConversion() == mcu::HalStatus::HAL_OK)
-		{
-			static int32_t mcuTemp = __LL_ADC_CALC_TEMPERATURE(3300, adc3.readRegular(), LL_ADC_RESOLUTION_16B);
-			adc3.startRegular();
-		}
 	}
 }
 
@@ -278,6 +273,34 @@ void emb::fatal_error_cb(const char* hint, int code)
 	cli::nextline_blocking();
 	bsp::ledRed.set();
 }
+
+
+
+mcu::SystemClock::TaskStatus taskLedHeartbeat()
+{
+	const uint64_t periods[4] = {100, 100, 100, 700};
+	static size_t index = 0;
+
+	mcu::SystemClock::setTaskPeriod(0, periods[index]);
+	if ((index % 2) == 0) { bsp::ledGreen.set(); }
+	else { bsp::ledGreen.reset(); }
+	index = (index + 1) % 4;
+	return mcu::SystemClock::TaskStatus::SUCCESS;
+};
+
+
+mcu::SystemClock::TaskStatus taskAcqMcuSysInfo()
+{
+	using namespace mcu::adc; 
+
+	if (Module<Peripheral::ADC_3>::instance().pollForConversion() == mcu::HalStatus::HAL_OK)
+	{
+		Sysinfo::saveMcuTemperature(mcu::calculateMcuTemperature<ADC_RESOLUTION_16B>(Module<Peripheral::ADC_3>::instance().readRegular()));
+		Module<Peripheral::ADC_3>::instance().startRegular();
+	}
+	return mcu::SystemClock::TaskStatus::SUCCESS;
+}
+
 
 
 

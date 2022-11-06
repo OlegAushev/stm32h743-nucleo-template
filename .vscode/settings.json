@@ -53,5 +53,5 @@
 		"editor.fontSize": 12
 	},
 	"terminal.integrated.fontSize": 12,
-	"cortex-debug.variableUseNaturalFormat": true,
+	"cortex-debug.variableUseNaturalFormat": false,
 }
