@@ -167,7 +167,7 @@ public:
 		/* Initialize FDCAN */
 		if constexpr (Instance == Peripheral::FDCAN_1)		{ m_handle.Instance = FDCAN1; }
 		else if constexpr (Instance == Peripheral::FDCAN_2)	{ m_handle.Instance = FDCAN2; }
-		else { fatal_error("invalid CAN module"); }
+		else { []<bool flag=false>(){ static_assert(flag); }(); }
 		
 		enableClock();
 

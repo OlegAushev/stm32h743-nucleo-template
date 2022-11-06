@@ -135,7 +135,7 @@ public:
 		else if constexpr (Instance == Peripheral::USART_6)	{ __HAL_RCC_USART6_CLK_ENABLE(); m_handle.Instance = USART6; }
 		else if constexpr (Instance == Peripheral::UART_7)	{ __HAL_RCC_UART7_CLK_ENABLE(); m_handle.Instance = UART7; }
 		else if constexpr (Instance == Peripheral::UART_8)	{ __HAL_RCC_UART8_CLK_ENABLE(); m_handle.Instance = UART8; }
-		else { fatal_error("invalid UART module"); }
+		else { []<bool flag=false>(){ static_assert(flag); }(); }
 
 		m_handle.Init = cfg.init;
 		m_handle.AdvancedInit = cfg.advanced;

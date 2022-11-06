@@ -115,7 +115,7 @@ public:
 		if constexpr (Instance == Peripheral::ADC_1) { m_handle.Instance = ADC1; }
 		else if constexpr (Instance == Peripheral::ADC_2) { m_handle.Instance = ADC2; }
 		else if constexpr (Instance == Peripheral::ADC_3) { m_handle.Instance = ADC3; }
-		else { fatal_error("invalid ADC module"); }
+		else { []<bool flag=false>(){ static_assert(flag); }(); }
 
 		enableClock(m_handle.Instance);
 
