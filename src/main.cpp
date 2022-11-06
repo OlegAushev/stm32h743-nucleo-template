@@ -18,6 +18,7 @@
 #include "mcu_stm32h7/uart/mcu_uart.h"
 #include "mcu_stm32h7/clock/mcu_clock.h"
 #include "mcu_stm32h7/can/mcu_can.h"
+#include "mcu_stm32h7/dma/mcu_dma.h"
 #include "mcu_stm32h7/adc/mcu_adc.h"
 #include "mcu_stm32h7/crc/mcu_crc.h"
 
@@ -35,7 +36,7 @@
 
 
 
-
+mcu::dma::Buffer<uint16_t, 16> adc3DmaBuffer;
 mcu::SystemClock::TaskStatus taskLedHeartbeat();
 mcu::SystemClock::TaskStatus taskAcqMcuSysInfo();
 
@@ -184,15 +185,26 @@ int main()
 	
 	cli::print_blocking("done");
 
+
+	/* === DMA === */
+	cli::nextline_blocking();
+	cli::print_blocking("enable DMA... ");
+
+	// TODO
+	
+	cli::print_blocking("done");
+
+
 	/* === ADC === */
 	cli::nextline_blocking();
 	cli::print_blocking("configure ADC modules and channels... ");
 
 	mcu::adc::Module<mcu::adc::Peripheral::ADC_3> adc3(settings.mcu.adc3Config);
 	adc3.addInternalChannel(settings.adcChannels.internalTempChannelConfig);
-	adc3.addInternalChannel(settings.adcChannels.internalVrefChannelConfig);
+	//adc3.addInternalChannel(settings.adcChannels.internalVrefChannelConfig);
 	adc3.calibrate();
-	adc3.startRegularConversion();
+	//adc3.startRegularConversion();
+	adc3.startRegularConversionDma(adc3DmaBuffer);
 
 	cli::print_blocking("done");
 

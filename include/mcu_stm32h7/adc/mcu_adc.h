@@ -20,6 +20,7 @@
 #include "../mcu_def.h"
 #include "../system/mcu_system.h"
 #include "../gpio/mcu_gpio.h"
+#include "../dma/mcu_dma.h"
 
 
 namespace mcu {
@@ -77,20 +78,20 @@ class ModuleBase
 private:
 	static inline std::array<bool, 2> m_isClockEnabled{};
 public:
-	void enableClock(ADC_TypeDef* adc)
+	void enableClock(Peripheral instance)
 	{
-		if ((adc == ADC1) || (adc == ADC2))
+		switch (instance)
 		{
+		case Peripheral::ADC_1:
+		case Peripheral::ADC_2:
+			if (m_isClockEnabled[0]) return;
 			__HAL_RCC_ADC12_CLK_ENABLE();
 			m_isClockEnabled[0] = true;
-		}
-		else if (adc == ADC3)
-		{
+		case Peripheral::ADC_3:
+			if (m_isClockEnabled[1]) return;
 			__HAL_RCC_ADC3_CLK_ENABLE();
 			m_isClockEnabled[1] = true;
-		}
-		else
-		{
+		default:
 			fatal_error("invalid ADC module");
 		}
 	}
@@ -120,7 +121,7 @@ public:
 		else if constexpr (Instance == Peripheral::ADC_3) { m_handle.Instance = ADC3; }
 		else { []<bool flag=false>(){ static_assert(flag); }(); }
 
-		enableClock(m_handle.Instance);
+		enableClock(Instance);
 
 		m_handle.Init = cfg.init;
 		if (HAL_ADC_Init(&m_handle) != HAL_OK)
@@ -128,6 +129,13 @@ public:
 			fatal_error("ADC module initialization failed");
 		}
 	}
+
+	/**
+	 * @brief 
+	 * 
+	 * @return ADC_HandleTypeDef& 
+	 */
+	ADC_HandleTypeDef& handle() { return m_handle; }
 
 	/**
 	 * @brief 
@@ -196,9 +204,9 @@ public:
 
 
 	template <uint32_t DmaBufSize>
-	HalStatus startRegularConversionDma(DmaBuffer<uint16_t, DmaBufSize>& buf)
+	HalStatus startRegularConversionDma(mcu::dma::Buffer<uint16_t, DmaBufSize>& buf)
 	{
-		HalStatus status = HAL_ADC_Start_DMA(&m_handle, buf.data, buf.size);
+		HalStatus status = HAL_ADC_Start_DMA(&m_handle, reinterpret_cast<uint32_t*>(buf.data), buf.size);
 		if constexpr (STRICT_ERROR_CONTROL)
 		{
 			if (status != HAL_OK)

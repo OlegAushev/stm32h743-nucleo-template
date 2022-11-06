@@ -48,23 +48,6 @@ public:
 };
 
 
-/**
- * @brief 
- * 
- * @tparam Size 
- */
-template <typename T, uint32_t Size>
-struct DmaBuffer
-{
-	T data[Size] __attribute__((aligned(32)));
-	constexpr uint32_t size() const { return Size; }
-	void invalidateDCache(size_t offset, size_t size)
-	{
-		SCB_InvalidateDCache_by_Addr(reinterpret_cast<uint32_t*>(&data[offset]), size * sizeof(T));
-	}
-};
-
-
 /// @}
 } // namespace mcu
 
