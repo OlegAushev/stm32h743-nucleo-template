@@ -195,9 +195,10 @@ public:
 	}
 
 
-	HalStatus startRegularConversionDma(uint32_t* dmaBuf, uint32_t len)
+	template <uint32_t DmaBufSize>
+	HalStatus startRegularConversionDma(DmaBuffer<uint16_t, DmaBufSize>& buf)
 	{
-		HalStatus status = HAL_ADC_Start_DMA(&m_handle, dmaBuf, len);
+		HalStatus status = HAL_ADC_Start_DMA(&m_handle, buf.data, buf.size);
 		if constexpr (STRICT_ERROR_CONTROL)
 		{
 			if (status != HAL_OK)
