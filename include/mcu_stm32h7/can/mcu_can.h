@@ -216,7 +216,7 @@ public:
 	 * 
 	 * @param frame 
 	 */
-	void send(can_frame frame)
+	HalStatus send(can_frame frame)
 	{
 		FDCAN_TxHeaderTypeDef header = {
 			.Identifier = frame.id,
@@ -229,7 +229,9 @@ public:
 			.TxEventFifoControl = FDCAN_NO_TX_EVENTS,
 			.MessageMarker = 0
 		};
-		if (HAL_FDCAN_AddMessageToTxFifoQ(&m_handle, &header, frame.data.data()) != HAL_OK)
+
+		HalStatus status = HAL_FDCAN_AddMessageToTxFifoQ(&m_handle, &header, frame.data.data());
+		if (status != HAL_OK)
 		{
 			++m_txErrorCounter;
 			if constexpr (STRICT_ERROR_CONTROL)
@@ -237,6 +239,7 @@ public:
 				emb::fatal_error("CAN tx error");
 			}
 		}
+		return status;
 	}
 
 	/**
@@ -245,16 +248,18 @@ public:
 	 * @param header 
 	 * @param data 
 	 */
-	void send(FDCAN_TxHeaderTypeDef& header, std::array<uint8_t, 8>& data)
+	HalStatus send(FDCAN_TxHeaderTypeDef& header, std::array<uint8_t, 8>& data)
 	{
-		if (HAL_FDCAN_AddMessageToTxFifoQ(&m_handle, &header, data.data()) != HAL_OK)
+		HalStatus status = HAL_FDCAN_AddMessageToTxFifoQ(&m_handle, &header, data.data());
+		if (status != HAL_OK)
 		{
 			++m_txErrorCounter;
 			if constexpr (STRICT_ERROR_CONTROL)
 			{
 				emb::fatal_error("CAN tx error");
 			}
-		}		
+		}
+		return status;		
 	}
 
 	/* INTERRUPTS */

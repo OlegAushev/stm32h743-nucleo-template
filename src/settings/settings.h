@@ -48,6 +48,7 @@ public:
 	struct AdcChannels
 	{
 		static const ADC_ChannelConfTypeDef internalTempChannelConfig;
+		static const ADC_ChannelConfTypeDef internalVrefChannelConfig;
 	} adcChannels;
 };
 

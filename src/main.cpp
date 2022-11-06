@@ -190,8 +190,9 @@ int main()
 
 	mcu::adc::Module<mcu::adc::Peripheral::ADC_3> adc3(settings.mcu.adc3Config);
 	adc3.addInternalChannel(settings.adcChannels.internalTempChannelConfig);
+	adc3.addInternalChannel(settings.adcChannels.internalVrefChannelConfig);
 	adc3.calibrate();
-	adc3.startRegular();
+	adc3.startRegularConversion();
 
 	cli::print_blocking("done");
 
@@ -295,8 +296,8 @@ mcu::SystemClock::TaskStatus taskAcqMcuSysInfo()
 
 	if (Module<Peripheral::ADC_3>::instance().pollForConversion() == mcu::HalStatus::HAL_OK)
 	{
-		Sysinfo::saveMcuTemperature(mcu::calculateMcuTemperature<ADC_RESOLUTION_16B>(Module<Peripheral::ADC_3>::instance().readRegular()));
-		Module<Peripheral::ADC_3>::instance().startRegular();
+		Sysinfo::saveMcuTemperature(mcu::calculateMcuTemperature<ADC_RESOLUTION_16B>(Module<Peripheral::ADC_3>::instance().readRegularConversion()));
+		Module<Peripheral::ADC_3>::instance().startRegularConversion();
 	}
 	return mcu::SystemClock::TaskStatus::SUCCESS;
 }

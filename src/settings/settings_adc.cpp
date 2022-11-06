@@ -47,3 +47,14 @@ const ADC_ChannelConfTypeDef Settings::AdcChannels::internalTempChannelConfig = 
 	.OffsetRightShift =		DISABLE,			/* No Right Offset Shift */
 	.OffsetSignedSaturation =	DISABLE,			/* No Signed Saturation */
 };
+
+const ADC_ChannelConfTypeDef Settings::AdcChannels::internalVrefChannelConfig = {
+	.Channel =			ADC_CHANNEL_VREFINT,		/* Sampled channel number */
+	.Rank =				ADC_REGULAR_RANK_2,		/* Rank of sampled channel number ADCx_CHANNEL */
+	.SamplingTime =			ADC_SAMPLETIME_810CYCLES_5,	/* Sampling time (number of clock cycles unit) */
+	.SingleDiff =			ADC_SINGLE_ENDED,		/* Single input channel */
+	.OffsetNumber =			ADC_OFFSET_NONE,		/* No offset subtraction */ 
+	.Offset =			0,				/* Parameter discarded because offset correction is disabled */
+	.OffsetRightShift =		DISABLE,			/* No Right Offset Shift */
+	.OffsetSignedSaturation =	DISABLE,			/* No Signed Saturation */
+};

@@ -28,6 +28,9 @@ namespace mcu {
 namespace adc {
 
 
+inline constexpr bool STRICT_ERROR_CONTROL = true;
+
+
 /// @brief 
 enum class Peripheral
 {
@@ -178,12 +181,31 @@ public:
 	 * @brief 
 	 * 
 	 */
-	void startRegular()
+	HalStatus startRegularConversion()
 	{
-		if (HAL_ADC_Start(&m_handle) != HAL_OK)
+		HalStatus status = HAL_ADC_Start(&m_handle);
+		if constexpr (STRICT_ERROR_CONTROL)
 		{
-			fatal_error("start regular ADC conversion failed");
+			if (status != HAL_OK)
+			{
+				fatal_error("regular ADC conversion start failed");
+			}
 		}
+		return status;
+	}
+
+
+	HalStatus startRegularConversionDma(uint32_t* dmaBuf, uint32_t len)
+	{
+		HalStatus status = HAL_ADC_Start_DMA(&m_handle, dmaBuf, len);
+		if constexpr (STRICT_ERROR_CONTROL)
+		{
+			if (status != HAL_OK)
+			{
+				fatal_error("regular ADC conversion with DMA start failed");
+			}
+		}
+		return status;
 	}
 
 	/**
@@ -201,7 +223,7 @@ public:
 	 * 
 	 * @return uint32_t 
 	 */
-	uint32_t readRegular()
+	uint32_t readRegularConversion()
 	{
 		return HAL_ADC_GetValue(&m_handle);
 	}
@@ -212,7 +234,7 @@ public:
 	 * @param injectedRank 
 	 * @return uint32_t 
 	 */
-	uint32_t readInjected(uint32_t injectedRank)
+	uint32_t readInjectedConversion(uint32_t injectedRank)
 	{
 		return HAL_ADCEx_InjectedGetValue(&m_handle, injectedRank);
 	}
