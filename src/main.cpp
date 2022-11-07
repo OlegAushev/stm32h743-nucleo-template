@@ -36,12 +36,9 @@
 #include "tests/tests.h"
 
 
-
-mcu::dma::Buffer<uint16_t, 1> adc3DmaBuffer;
+mcu::dma::Buffer<uint16_t, 32> adc3DmaBuffer __attribute__((section(".dma_buf_section")));
 mcu::SystemClock::TaskStatus taskLedHeartbeat();
 mcu::SystemClock::TaskStatus taskAcqMcuSysInfo();
-
-
 
 
 /**
@@ -53,8 +50,8 @@ int main()
 {
 	/* === HAL, CLOCKS === */
 	HAL_Init();
-	mcu::enableICache();
-	mcu::enableDCache();
+	// FIXME mcu::enableICache();
+	// FIXME mcu::enableDCache();
 	mcu::initDeviceClock();
 	mcu::delay_ms(500);
 
@@ -199,9 +196,18 @@ int main()
 
 	adc3.addInternalChannel(sysconfig::adc3::channels::internalTemp);
 	//adc3.addInternalChannel(settings.adcChannels.internalVrefChannelConfig);
-	adc3.calibrate();
+	//adc3.calibrate();
 	//adc3.startRegularConversion();
 	adc3.startRegularConversionWithDma(adc3DmaBuffer);
+
+
+
+
+
+
+
+
+
 
 	cli::print_blocking("done");
 
@@ -312,42 +318,20 @@ mcu::SystemClock::TaskStatus taskAcqMcuSysInfo()
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
-  * @brief  Conversion complete callback in non-blocking mode
-  * @param  hadc: ADC handle
-  * @retval None
-  */
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 {
-  /* Invalidate Data Cache to get the updated content of the SRAM on the first half of the ADC converted data buffer: 32 bytes */
-  //SCB_InvalidateDCache_by_Addr((uint32_t *) &aADCxConvertedData[0], ADC_CONVERTED_DATA_BUFFER_SIZE);
+
 }
 
-/**
-  * @brief  Conversion DMA half-transfer callback in non-blocking mode
-  * @param  hadc: ADC handle
-  * @retval None
-  */
+
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-   /* Invalidate Data Cache to get the updated content of the SRAM on the second half of the ADC converted data buffer: 32 bytes */
-  //SCB_InvalidateDCache_by_Addr((uint32_t *) &aADCxConvertedData[ADC_CONVERTED_DATA_BUFFER_SIZE/2], ADC_CONVERTED_DATA_BUFFER_SIZE);
+	bsp::ledBlue.toggle();
+}
+
+
+void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
+{
+
 }
 

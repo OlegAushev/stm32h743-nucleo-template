@@ -133,7 +133,7 @@ template <Peripheral Instance>
 class Stream : public impl::StreamBase, public emb::interrupt_invoker<Stream<Instance>>
 {
 private:
-	DMA_HandleTypeDef m_handle;
+	DMA_HandleTypeDef m_handle{};
 	DMA_HandleTypeDef* m_handlePeripheral{nullptr};
 public:
 	/**

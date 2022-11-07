@@ -109,7 +109,7 @@ template <Peripheral Instance>
 class Module : public impl::ModuleBase, private emb::noncopyable, public emb::interrupt_invoker<Module<Instance>>
 {
 private:
-	ADC_HandleTypeDef m_handle;
+	ADC_HandleTypeDef m_handle{};
 public:
 	/**
 	 * @brief Construct a new Module object

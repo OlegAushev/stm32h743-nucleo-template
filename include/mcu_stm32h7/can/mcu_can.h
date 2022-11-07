@@ -112,7 +112,7 @@ class Module : public impl::ModuleBase, private emb::noncopyable, public emb::in
 {
 	friend void ::HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef*, uint32_t);
 private:
-	FDCAN_HandleTypeDef m_handle;
+	FDCAN_HandleTypeDef m_handle{};
 	mcu::gpio::Input m_rxPin;
 	mcu::gpio::Output m_txPin;
 

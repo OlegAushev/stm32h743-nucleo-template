@@ -89,7 +89,7 @@ template <Peripheral Instance>
 class Module : public emb::IUart, private emb::noncopyable, public emb::interrupt_invoker<Module<Instance>>
 {
 private:
-	UART_HandleTypeDef m_handle;
+	UART_HandleTypeDef m_handle{};
 	mcu::gpio::Input m_rxPin;
 	mcu::gpio::Output m_txPin;
 

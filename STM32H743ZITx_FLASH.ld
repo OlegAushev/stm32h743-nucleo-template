@@ -170,6 +170,12 @@ SECTIONS
   }
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
+
+  /* user sections */
+  .dma_buf_block (NOLOAD) :
+  {
+    KEEP(*(.dma_buf_section))
+  } > RAM_D2
 }
 
 
