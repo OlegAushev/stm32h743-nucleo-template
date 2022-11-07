@@ -57,6 +57,27 @@ struct Config
 };
 
 
+namespace impl {
+
+
+inline constexpr std::array<IRQn_Type, 14> irqNumbers = {	
+	DMA1_Stream0_IRQn,
+	DMA1_Stream1_IRQn,
+	DMA1_Stream2_IRQn,
+	DMA1_Stream3_IRQn,
+	DMA1_Stream4_IRQn,
+	DMA1_Stream5_IRQn,
+	DMA1_Stream6_IRQn,
+	DMA2_Stream0_IRQn,
+	DMA2_Stream1_IRQn,
+	DMA2_Stream2_IRQn,
+	DMA2_Stream3_IRQn,
+	DMA2_Stream4_IRQn,
+	DMA2_Stream5_IRQn,
+	DMA2_Stream6_IRQn
+};
+
+
 /**
  * @brief 
  * 
@@ -65,7 +86,7 @@ class StreamBase
 {
 private:
 	static inline std::array<bool, 2> m_isClockEnabled{};
-public:
+protected:
 	void enableClock(Peripheral instance)
 	{
 		switch (instance)
@@ -100,17 +121,26 @@ public:
 };
 
 
+} // namespace impl
+
+
 /**
  * @brief 
  * 
  * @tparam Instance 
  */
 template <Peripheral Instance>
-class Stream : public StreamBase, public emb::interrupt_invoker<Stream<Instance>>
+class Stream : public impl::StreamBase, public emb::interrupt_invoker<Stream<Instance>>
 {
 private:
 	DMA_HandleTypeDef m_handle;
+	DMA_HandleTypeDef* m_handlePeripheral{nullptr};
 public:
+	/**
+	 * @brief Construct a new Stream object
+	 * 
+	 * @param cfg 
+	 */
 	Stream(const Config& cfg)
 		: emb::interrupt_invoker<Stream<Instance>>(this)
 	{
@@ -141,6 +171,45 @@ public:
 		{
 			fatal_error("DMA stream initialization failed");
 		}
+	}
+
+	/**
+	 * @brief 
+	 * 
+	 * @return DMA_HandleTypeDef& 
+	 */
+	DMA_HandleTypeDef& handle() { return m_handle; }
+
+
+	DMA_HandleTypeDef& handlePeripheral() { return *m_handlePeripheral; }
+
+	/**
+	 * @brief 
+	 * 
+	 * @param priority 
+	 */
+	void initInterrupts(DMA_HandleTypeDef* dmaHandlePeripheral, mcu::InterruptPriority priority)
+	{
+		m_handlePeripheral = dmaHandlePeripheral;
+		HAL_NVIC_SetPriority(impl::irqNumbers[static_cast<size_t>(Instance)], priority.value(), 0);
+	}
+
+	/**
+	 * @brief 
+	 * 
+	 */
+	void enableInterrupts()
+	{
+		HAL_NVIC_EnableIRQ(impl::irqNumbers[static_cast<size_t>(Instance)]);
+	}
+
+	/**
+	 * @brief 
+	 * 
+	 */
+	void disableInterrupts()
+	{
+		HAL_NVIC_DisableIRQ(impl::irqNumbers[static_cast<size_t>(Instance)]);
 	}
 };
 

@@ -77,7 +77,7 @@ class ModuleBase
 {
 private:
 	static inline std::array<bool, 2> m_isClockEnabled{};
-public:
+protected:
 	void enableClock(Peripheral instance)
 	{
 		switch (instance)
@@ -153,6 +153,15 @@ public:
 		}
 	}
 
+
+	template <dma::Peripheral DmaInstance>
+	void linkDma(dma::Stream<DmaInstance>& dmaStream)
+	{
+		m_handle.DMA_Handle = &dmaStream.handle();
+		dmaStream.handle().Parent = &m_handle;
+	}
+
+
 	/**
 	 * @brief 
 	 * 
@@ -207,7 +216,7 @@ public:
 
 
 	template <uint32_t DmaBufSize>
-	HalStatus startRegularConversionDma(mcu::dma::Buffer<uint16_t, DmaBufSize>& buf)
+	HalStatus startRegularConversionWithDma(mcu::dma::Buffer<uint16_t, DmaBufSize>& buf)
 	{
 		HalStatus status = HAL_ADC_Start_DMA(&m_handle, reinterpret_cast<uint32_t*>(buf.data), buf.size);
 		if constexpr (STRICT_ERROR_CONTROL)

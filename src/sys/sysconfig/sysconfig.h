@@ -48,6 +48,10 @@ extern const mcu::can::Config config;
 namespace adc3 {
 extern const mcu::adc::Config config;
 
+namespace dma {
+extern const mcu::dma::Config config;
+}
+
 namespace channels {
 extern const ADC_ChannelConfTypeDef internalTemp;
 extern const ADC_ChannelConfTypeDef internalVref;

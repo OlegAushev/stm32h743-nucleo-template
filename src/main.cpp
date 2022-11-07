@@ -37,7 +37,7 @@
 
 
 
-mcu::dma::Buffer<uint16_t, 16> adc3DmaBuffer;
+mcu::dma::Buffer<uint16_t, 1> adc3DmaBuffer;
 mcu::SystemClock::TaskStatus taskLedHeartbeat();
 mcu::SystemClock::TaskStatus taskAcqMcuSysInfo();
 
@@ -186,26 +186,22 @@ int main()
 	
 	cli::print_blocking("done");
 
-
-	/* === DMA === */
-	cli::nextline_blocking();
-	cli::print_blocking("enable DMA... ");
-
-	// TODO
-	
-	cli::print_blocking("done");
-
-
 	/* === ADC === */
 	cli::nextline_blocking();
 	cli::print_blocking("configure ADC modules and channels... ");
 
 	mcu::adc::Module<mcu::adc::Peripheral::ADC_3> adc3(sysconfig::adc3::config);
+	mcu::dma::Stream<mcu::dma::Peripheral::DMA1_STREAM1> dma1Stream1(sysconfig::adc3::dma::config);
+	adc3.linkDma(dma1Stream1);
+	dma1Stream1.initInterrupts(adc3.handle().DMA_Handle ,mcu::InterruptPriority(1));
+	dma1Stream1.enableInterrupts();
+
+
 	adc3.addInternalChannel(sysconfig::adc3::channels::internalTemp);
 	//adc3.addInternalChannel(settings.adcChannels.internalVrefChannelConfig);
 	adc3.calibrate();
 	//adc3.startRegularConversion();
-	adc3.startRegularConversionDma(adc3DmaBuffer);
+	adc3.startRegularConversionWithDma(adc3DmaBuffer);
 
 	cli::print_blocking("done");
 
@@ -318,4 +314,40 @@ mcu::SystemClock::TaskStatus taskAcqMcuSysInfo()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+  * @brief  Conversion complete callback in non-blocking mode
+  * @param  hadc: ADC handle
+  * @retval None
+  */
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
+{
+  /* Invalidate Data Cache to get the updated content of the SRAM on the first half of the ADC converted data buffer: 32 bytes */
+  //SCB_InvalidateDCache_by_Addr((uint32_t *) &aADCxConvertedData[0], ADC_CONVERTED_DATA_BUFFER_SIZE);
+}
+
+/**
+  * @brief  Conversion DMA half-transfer callback in non-blocking mode
+  * @param  hadc: ADC handle
+  * @retval None
+  */
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+{
+   /* Invalidate Data Cache to get the updated content of the SRAM on the second half of the ADC converted data buffer: 32 bytes */
+  //SCB_InvalidateDCache_by_Addr((uint32_t *) &aADCxConvertedData[ADC_CONVERTED_DATA_BUFFER_SIZE/2], ADC_CONVERTED_DATA_BUFFER_SIZE);
+}
 

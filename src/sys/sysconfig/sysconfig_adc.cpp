@@ -24,7 +24,7 @@ const mcu::adc::Config sysconfig::adc3::config = {
 		.ScanConvMode =			DISABLE,			/* Sequencer disabled (ADC conversion on only 1 channel: channel set on rank 1) */
 		.EOCSelection =			ADC_EOC_SINGLE_CONV,		/* EOC flag picked-up to indicate conversion end */
 		.LowPowerAutoWait =		DISABLE,			/* Auto-delayed conversion feature disabled */
-		.ContinuousConvMode =		ENABLE,				/* Continuous mode disabled (automatic conversion restart after each conversion) */
+		.ContinuousConvMode =		DISABLE,			/* Continuous mode disabled (automatic conversion restart after each conversion) */
 		.NbrOfConversion =		1,				/* Parameter discarded because sequencer is disabled */
 		.DiscontinuousConvMode =	DISABLE,			/* Parameter discarded because sequencer is disabled */
 		.NbrOfDiscConversion =		1,				/* Parameter discarded because sequencer is disabled */
@@ -34,6 +34,19 @@ const mcu::adc::Config sysconfig::adc3::config = {
 		.Overrun =			ADC_OVR_DATA_OVERWRITTEN,	/* DR register is overwritten with the last conversion result in case of overrun */
 		.LeftBitShift =			ADC_LEFTBITSHIFT_NONE,		/* Left shift of final results */
 		.OversamplingMode =		DISABLE				/* Oversampling disable */
+	}
+};
+
+const mcu::dma::Config sysconfig::adc3::dma::config = {
+	.init = {
+		.Request =			DMA_REQUEST_ADC3,
+		.Direction =			DMA_PERIPH_TO_MEMORY,
+		.PeriphInc =			DMA_PINC_DISABLE,
+		.MemInc=			DMA_MINC_ENABLE,
+		.PeriphDataAlignment =		DMA_PDATAALIGN_HALFWORD,
+		.MemDataAlignment =		DMA_MDATAALIGN_HALFWORD,
+		.Mode =				DMA_CIRCULAR,
+		.Priority =			DMA_PRIORITY_HIGH,
 	}
 };
 

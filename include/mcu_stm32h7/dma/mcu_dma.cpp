@@ -9,3 +9,36 @@
  * @copyright Copyright (c) 2022
  * 
  */
+
+
+#include "mcu_dma.h"
+
+
+extern "C" void DMA1_Stream0_IRQHandler(void)
+{
+	using namespace mcu::dma;
+	HAL_DMA_IRQHandler(&Stream<Peripheral::DMA1_STREAM0>::instance().handlePeripheral());
+}
+
+
+extern "C" void DMA1_Stream1_IRQHandler(void)
+{
+	using namespace mcu::dma;
+	HAL_DMA_IRQHandler(&Stream<Peripheral::DMA1_STREAM1>::instance().handlePeripheral());
+}
+
+
+extern "C" void DMA1_Stream2_IRQHandler(void)
+{
+	using namespace mcu::dma;
+	HAL_DMA_IRQHandler(&Stream<Peripheral::DMA1_STREAM2>::instance().handlePeripheral());
+}
+
+
+extern "C" void DMA1_Stream3_IRQHandler(void)
+{
+	using namespace mcu::dma;
+	HAL_DMA_IRQHandler(&Stream<Peripheral::DMA1_STREAM3>::instance().handlePeripheral());
+}
+
+
