@@ -23,7 +23,7 @@ set(cpu_parameters
 	-mfloat-abi=hard)
 
 set(mcu_startup_script ${PROJECT_SOURCE_DIR}/src/startup_stm32h743xx.s)
-set(mcu_linker_script ${PROJECT_SOURCE_DIR}/STM32H743ZITx_FLASH.ld)
+set(mcu_linker_script ${PROJECT_SOURCE_DIR}/STM32H743ZITx_FLASH_DTCMRAM.ld)
 
 ################################################################################
 # Headers and Sources
