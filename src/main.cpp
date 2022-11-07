@@ -26,10 +26,11 @@
 #include "bsp_h743_nucleo/leds/leds.h"
 #include "bsp_h743_nucleo/button/button.h"
 
+#include "sys/sysconfig/sysconfig.h"
+#include "sys/sysinfo/sysinfo.h"
 #include "settings/settings.h"
 #include "cli/cli_server.h"
 #include "cli/shell/cli_shell.h"
-#include "sys/sysinfo/sysinfo.h"
 
 #include "build/generated/git_version.h"
 #include "tests/tests.h"
@@ -60,14 +61,14 @@ int main()
 
 	/* === SETTINGS === */
 	Settings::init();
-	Settings settings;
+	Settings settings;	// is not used yet
 
 
 	/* === UART === */
 	mcu::uart::Module<mcu::uart::Peripheral::USART_2> uart2(
-			settings.mcu.uart2RxPinConfig,
-			settings.mcu.uart2TxPinConfig,
-			settings.mcu.uart2Config);
+			sysconfig::uart2::rxPinConfig,
+			sysconfig::uart2::txPinConfig,
+			sysconfig::uart2::config);
 
 
 	/* === CLI === */
@@ -145,10 +146,10 @@ int main()
 	cli::nextline_blocking();
 	cli::print_blocking("configure CAN1 module... ");
 	mcu::can::Module<mcu::can::Peripheral::FDCAN_1> can1(
-			settings.mcu.can1RxPinConfig,
-			settings.mcu.can1TxPinConfig,
-			settings.mcu.can1Config,
-			settings.mcu.can1RxFilters);
+			sysconfig::can1::rxPinConfig,
+			sysconfig::can1::txPinConfig,
+			sysconfig::can1::config,
+			sysconfig::can1::rxFilters);
 	
 	
 	/* === CAN2 === */
@@ -157,10 +158,10 @@ int main()
 
 	std::vector<FDCAN_FilterTypeDef> can2RxFilters;
 	mcu::can::Module<mcu::can::Peripheral::FDCAN_2> can2(
-			settings.mcu.can2RxPinConfig,
-			settings.mcu.can2TxPinConfig,
-			settings.mcu.can2Config,
-			settings.mcu.can2RxFilters);
+			sysconfig::can2::rxPinConfig,
+			sysconfig::can2::txPinConfig,
+			sysconfig::can2::config,
+			sysconfig::can2::rxFilters);
 
 	cli::print_blocking("done");
 
@@ -199,8 +200,8 @@ int main()
 	cli::nextline_blocking();
 	cli::print_blocking("configure ADC modules and channels... ");
 
-	mcu::adc::Module<mcu::adc::Peripheral::ADC_3> adc3(settings.mcu.adc3Config);
-	adc3.addInternalChannel(settings.adcChannels.internalTempChannelConfig);
+	mcu::adc::Module<mcu::adc::Peripheral::ADC_3> adc3(sysconfig::adc3::config);
+	adc3.addInternalChannel(sysconfig::adc3::channels::internalTemp);
 	//adc3.addInternalChannel(settings.adcChannels.internalVrefChannelConfig);
 	adc3.calibrate();
 	//adc3.startRegularConversion();

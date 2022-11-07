@@ -87,12 +87,15 @@ public:
 			if (m_isClockEnabled[0]) return;
 			__HAL_RCC_ADC12_CLK_ENABLE();
 			m_isClockEnabled[0] = true;
+			break;
 		case Peripheral::ADC_3:
 			if (m_isClockEnabled[1]) return;
 			__HAL_RCC_ADC3_CLK_ENABLE();
 			m_isClockEnabled[1] = true;
+			break;
 		default:
 			fatal_error("invalid ADC module");
+			break;
 		}
 	}
 };

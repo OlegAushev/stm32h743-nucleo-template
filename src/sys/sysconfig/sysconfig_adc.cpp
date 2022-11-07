@@ -1,23 +1,23 @@
 /**
- * @file settings_adc.cpp
+ * @file sysconfig_adc.cpp
  * @author Oleg Aushev (aushevom@protonmail.com)
  * @brief 
  * @version 0.1
- * @date 2022-11-03
+ * @date 2022-11-07
  * 
  * @copyright Copyright (c) 2022
  * 
  */
 
 
-#include "settings.h"
+#include "sysconfig.h"
 
 
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 
 
 /* ADC3 */
-const mcu::adc::Config Settings::Mcu::adc3Config = {
+const mcu::adc::Config sysconfig::adc3::config = {
 	.init = {
 		.ClockPrescaler =		ADC_CLOCK_ASYNC_DIV16,	
 		.Resolution =			ADC_RESOLUTION_16B,		/* 16-bit resolution for converted data */
@@ -37,7 +37,7 @@ const mcu::adc::Config Settings::Mcu::adc3Config = {
 	}
 };
 
-const ADC_ChannelConfTypeDef Settings::AdcChannels::internalTempChannelConfig = {
+const ADC_ChannelConfTypeDef sysconfig::adc3::channels::internalTemp = {
 	.Channel =			ADC_CHANNEL_TEMPSENSOR,		/* Sampled channel number */
 	.Rank =				ADC_REGULAR_RANK_1,		/* Rank of sampled channel number ADCx_CHANNEL */
 	.SamplingTime =			ADC_SAMPLETIME_810CYCLES_5,	/* Sampling time (number of clock cycles unit) */
@@ -48,7 +48,7 @@ const ADC_ChannelConfTypeDef Settings::AdcChannels::internalTempChannelConfig = 
 	.OffsetSignedSaturation =	DISABLE,			/* No Signed Saturation */
 };
 
-const ADC_ChannelConfTypeDef Settings::AdcChannels::internalVrefChannelConfig = {
+const ADC_ChannelConfTypeDef sysconfig::adc3::channels::internalVref = {
 	.Channel =			ADC_CHANNEL_VREFINT,		/* Sampled channel number */
 	.Rank =				ADC_REGULAR_RANK_2,		/* Rank of sampled channel number ADCx_CHANNEL */
 	.SamplingTime =			ADC_SAMPLETIME_810CYCLES_5,	/* Sampling time (number of clock cycles unit) */
@@ -58,3 +58,5 @@ const ADC_ChannelConfTypeDef Settings::AdcChannels::internalVrefChannelConfig = 
 	.OffsetRightShift =		DISABLE,			/* No Right Offset Shift */
 	.OffsetSignedSaturation =	DISABLE,			/* No Signed Saturation */
 };
+
+
