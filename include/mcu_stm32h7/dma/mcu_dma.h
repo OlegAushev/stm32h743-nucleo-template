@@ -37,6 +37,7 @@ enum class Peripheral
 	DMA1_STREAM4,
 	DMA1_STREAM5,
 	DMA1_STREAM6,
+	DMA1_STREAM7,
 	DMA2_STREAM0,
 	DMA2_STREAM1,
 	DMA2_STREAM2,
@@ -44,6 +45,7 @@ enum class Peripheral
 	DMA2_STREAM4,
 	DMA2_STREAM5,
 	DMA2_STREAM6,
+	DMA2_STREAM7
 };
 
 
@@ -60,7 +62,7 @@ struct Config
 namespace impl {
 
 
-inline constexpr std::array<IRQn_Type, 14> irqNumbers = {	
+inline constexpr std::array<IRQn_Type, 16> irqNumbers = {	
 	DMA1_Stream0_IRQn,
 	DMA1_Stream1_IRQn,
 	DMA1_Stream2_IRQn,
@@ -68,13 +70,15 @@ inline constexpr std::array<IRQn_Type, 14> irqNumbers = {
 	DMA1_Stream4_IRQn,
 	DMA1_Stream5_IRQn,
 	DMA1_Stream6_IRQn,
+	DMA1_Stream7_IRQn,
 	DMA2_Stream0_IRQn,
 	DMA2_Stream1_IRQn,
 	DMA2_Stream2_IRQn,
 	DMA2_Stream3_IRQn,
 	DMA2_Stream4_IRQn,
 	DMA2_Stream5_IRQn,
-	DMA2_Stream6_IRQn
+	DMA2_Stream6_IRQn,
+	DMA2_Stream7_IRQn
 };
 
 
@@ -98,6 +102,7 @@ protected:
 		case Peripheral::DMA1_STREAM4:
 		case Peripheral::DMA1_STREAM5:
 		case Peripheral::DMA1_STREAM6:
+		case Peripheral::DMA1_STREAM7:
 			if (m_isClockEnabled[0]) return;
 			__HAL_RCC_DMA1_CLK_ENABLE();
 			m_isClockEnabled[0] = true;
@@ -109,6 +114,7 @@ protected:
 		case Peripheral::DMA2_STREAM4:
 		case Peripheral::DMA2_STREAM5:
 		case Peripheral::DMA2_STREAM6:
+		case Peripheral::DMA2_STREAM7:
 			if (m_isClockEnabled[1]) return;
 			__HAL_RCC_DMA2_CLK_ENABLE();
 			m_isClockEnabled[1] = true;
@@ -151,6 +157,7 @@ public:
 		else if constexpr (Instance == Peripheral::DMA1_STREAM4) { m_handle.Instance = DMA1_Stream4; }
 		else if constexpr (Instance == Peripheral::DMA1_STREAM5) { m_handle.Instance = DMA1_Stream5; }
 		else if constexpr (Instance == Peripheral::DMA1_STREAM6) { m_handle.Instance = DMA1_Stream6; }
+		else if constexpr (Instance == Peripheral::DMA1_STREAM7) { m_handle.Instance = DMA1_Stream7; }
 		else if constexpr (Instance == Peripheral::DMA2_STREAM0) { m_handle.Instance = DMA2_Stream0; }
 		else if constexpr (Instance == Peripheral::DMA2_STREAM1) { m_handle.Instance = DMA2_Stream1; }
 		else if constexpr (Instance == Peripheral::DMA2_STREAM2) { m_handle.Instance = DMA2_Stream2; }
@@ -158,6 +165,7 @@ public:
 		else if constexpr (Instance == Peripheral::DMA2_STREAM4) { m_handle.Instance = DMA2_Stream4; }
 		else if constexpr (Instance == Peripheral::DMA2_STREAM5) { m_handle.Instance = DMA2_Stream5; }
 		else if constexpr (Instance == Peripheral::DMA2_STREAM6) { m_handle.Instance = DMA2_Stream6; }
+		else if constexpr (Instance == Peripheral::DMA2_STREAM7) { m_handle.Instance = DMA2_Stream7; }
 		else { []<bool flag=false>(){ static_assert(flag); }(); }
 
 		enableClock(Instance);
@@ -231,7 +239,9 @@ struct Buffer
 };
 
 
-}
+} // namespace dma
 
 
-}
+} // namespace mcu
+
+

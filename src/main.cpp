@@ -50,8 +50,8 @@ int main()
 {
 	/* === HAL, CLOCKS === */
 	HAL_Init();
-	// FIXME mcu::enableICache();
-	// FIXME mcu::enableDCache();
+	mcu::enableICache();
+	mcu::enableDCache();
 	mcu::initDeviceClock();
 	mcu::delay_ms(500);
 
@@ -193,21 +193,11 @@ int main()
 	dma1Stream1.initInterrupts(adc3.handle().DMA_Handle ,mcu::InterruptPriority(1));
 	dma1Stream1.enableInterrupts();
 
-
 	adc3.addInternalChannel(sysconfig::adc3::channels::internalTemp);
 	//adc3.addInternalChannel(settings.adcChannels.internalVrefChannelConfig);
-	//adc3.calibrate();
+	adc3.calibrate();
 	//adc3.startRegularConversion();
 	adc3.startRegularConversionWithDma(adc3DmaBuffer);
-
-
-
-
-
-
-
-
-
 
 	cli::print_blocking("done");
 
@@ -320,13 +310,13 @@ mcu::SystemClock::TaskStatus taskAcqMcuSysInfo()
 
 void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 {
-
+	mcu::gpio::DurationLogger<mcu::gpio::DurationLoggerMode::SET_RESET> dl(GPIOC, GPIO_PIN_11);
 }
 
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
-	bsp::ledBlue.toggle();
+	mcu::gpio::DurationLogger<mcu::gpio::DurationLoggerMode::SET_RESET> dl(GPIOC, GPIO_PIN_12);
 }
 
 

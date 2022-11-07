@@ -81,6 +81,18 @@ struct Config
 namespace impl {
 
 
+inline constexpr std::array<IRQn_Type, 16> irq0Numbers = {	
+	FDCAN1_IT0_IRQn,
+	FDCAN2_IT0_IRQn,
+};
+
+
+inline constexpr std::array<IRQn_Type, 16> irq1Numbers = {	
+	FDCAN1_IT1_IRQn,
+	FDCAN2_IT1_IRQn,
+};
+
+
 /**
  * @brief 
  * 
@@ -308,8 +320,8 @@ public:
 	 */
 	void setInterruptPriority(InterruptPriority line0Priority, InterruptPriority line1Priority)
 	{
-		HAL_NVIC_SetPriority(FDCAN1_IT0_IRQn, line0Priority.value(), 0);
-		HAL_NVIC_SetPriority(FDCAN1_IT1_IRQn, line1Priority.value(), 0);
+		HAL_NVIC_SetPriority(impl::irq0Numbers[static_cast<size_t>(Instance)], line0Priority.value(), 0);
+		HAL_NVIC_SetPriority(impl::irq1Numbers[static_cast<size_t>(Instance)], line1Priority.value(), 0);
 	}
 
 	/**
@@ -318,8 +330,8 @@ public:
 	 */
 	void enableInterrupts()
 	{
-		HAL_NVIC_EnableIRQ(FDCAN1_IT0_IRQn);
-		HAL_NVIC_EnableIRQ(FDCAN1_IT1_IRQn);
+		HAL_NVIC_EnableIRQ(impl::irq0Numbers[static_cast<size_t>(Instance)]);
+		HAL_NVIC_EnableIRQ(impl::irq1Numbers[static_cast<size_t>(Instance)]);
 	}
 
 	/**
@@ -328,8 +340,8 @@ public:
 	 */
 	void disableInterrupts()
 	{
-		HAL_NVIC_DisableIRQ(FDCAN1_IT0_IRQn);
-		HAL_NVIC_DisableIRQ(FDCAN1_IT1_IRQn);
+		HAL_NVIC_DisableIRQ(impl::irq0Numbers[static_cast<size_t>(Instance)]);
+		HAL_NVIC_DisableIRQ(impl::irq1Numbers[static_cast<size_t>(Instance)]);
 	}
 };
 
