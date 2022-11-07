@@ -260,9 +260,11 @@ public:
 		return HAL_ADCEx_InjectedGetValue(&m_handle, injectedRank);
 	}
 
-
-
-
+	/* INTERRUPTS */
+public:
+	static inline std::function<void()> onDmaHalfDone = [](){ emb::fatal_error("uninitialized callback"); };
+	static inline std::function<void()> onDmaDone = [](){ emb::fatal_error("uninitialized callback"); };
+	static inline std::function<void()> onDmaError = [](){ emb::fatal_error("uninitialized callback"); };
 };
 
 

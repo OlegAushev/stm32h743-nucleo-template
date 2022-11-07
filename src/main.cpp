@@ -58,7 +58,7 @@ int main()
 
 	/* === SETTINGS === */
 	Settings::init();
-	Settings settings;	// is not used yet
+	Settings settings;	// TODO is not used yet
 
 
 	/* === UART === */
@@ -189,12 +189,15 @@ int main()
 
 	mcu::adc::Module<mcu::adc::Peripheral::ADC_3> adc3(sysconfig::adc3::config);
 	mcu::dma::Stream<mcu::dma::Peripheral::DMA1_STREAM1> dma1Stream1(sysconfig::adc3::dma::config);
+	adc3.onDmaHalfDone = [](){};
+	adc3.onDmaDone = [](){};
+	adc3.onDmaError = [](){};	
 	adc3.linkDma(dma1Stream1);
 	dma1Stream1.initInterrupts(adc3.handle().DMA_Handle ,mcu::InterruptPriority(1));
 	dma1Stream1.enableInterrupts();
 
 	adc3.addInternalChannel(sysconfig::adc3::channels::internalTemp);
-	//adc3.addInternalChannel(settings.adcChannels.internalVrefChannelConfig);
+	// TODO adc3.addInternalChannel(settings.adcChannels.internalVrefChannelConfig);
 	adc3.calibrate();
 	//adc3.startRegularConversion();
 	adc3.startRegularConversionWithDma(adc3DmaBuffer);
@@ -206,7 +209,7 @@ int main()
 	cli::nextline_blocking();
 	cli::print_blocking("configure CRC module... ");
 
-	//mcu::crc::Module::instance().init({});
+	// TODO mcu::crc::Module::instance().init({});
 
 	cli::print_blocking("done");
 
@@ -218,8 +221,8 @@ int main()
 	mcu::SystemClock::registerTask(0, taskLedHeartbeat);
 	mcu::SystemClock::setTaskPeriod(0, 2000);
 
-	mcu::SystemClock::registerTask(1, taskAcqMcuSysInfo);
-	mcu::SystemClock::setTaskPeriod(1, 1000);
+	//mcu::SystemClock::registerTask(1, taskAcqMcuSysInfo);
+	//mcu::SystemClock::setTaskPeriod(1, 1000);
 
 	cli::print_blocking("done");
 
@@ -308,20 +311,5 @@ mcu::SystemClock::TaskStatus taskAcqMcuSysInfo()
 }
 
 
-void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
-{
-	mcu::gpio::DurationLogger<mcu::gpio::DurationLoggerMode::SET_RESET> dl(GPIOC, GPIO_PIN_11);
-}
 
-
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
-{
-	mcu::gpio::DurationLogger<mcu::gpio::DurationLoggerMode::SET_RESET> dl(GPIOC, GPIO_PIN_12);
-}
-
-
-void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
-{
-
-}
 

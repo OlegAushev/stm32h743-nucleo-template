@@ -12,6 +12,7 @@
 
 
 #include "mcu_dma.h"
+#include "../gpio/mcu_gpio.h"
 
 
 extern "C" void DMA1_Stream0_IRQHandler(void)
