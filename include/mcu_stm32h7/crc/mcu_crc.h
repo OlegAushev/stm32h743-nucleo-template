@@ -74,13 +74,13 @@ public:
 	/**
 	 * @brief 
 	 * 
-	 * @param cfg 
+	 * @param conf 
 	 */
-	void init(const Config& cfg)
+	void init(const Config& conf)
 	{
 		m_handle.Instance = CRC;
-		m_handle.Init = cfg.init;
-		m_handle.InputDataFormat = static_cast<uint32_t>(cfg.inputDataFormat);
+		m_handle.Init = conf.init;
+		m_handle.InputDataFormat = static_cast<uint32_t>(conf.inputDataFormat);
 		if (HAL_CRC_Init(&m_handle) != HAL_OK)
 		{
 			fatal_error("CRC module initialization failed");

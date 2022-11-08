@@ -139,6 +139,25 @@ float calculateMcuTemperature(uint32_t adcData)
 }
 
 
+/**
+ * @brief 
+ * 
+ * @tparam AdcResolution 
+ * @param adcData 
+ * @return float 
+ */
+template <uint32_t AdcResolution>
+float calculateMcuVref(uint32_t adcData)
+{
+	if constexpr (AdcResolution == ADC_RESOLUTION_16B)
+	{
+		return 3.3f * float(*VREFINT_CAL_ADDR) / float(adcData);
+	}
+	else static_assert(AdcResolution == ADC_RESOLUTION_16B);
+	return 0;
+}
+
+
 
 
 

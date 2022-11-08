@@ -145,9 +145,9 @@ public:
 	/**
 	 * @brief Construct a new Stream object
 	 * 
-	 * @param cfg 
+	 * @param conf 
 	 */
-	Stream(const Config& cfg)
+	Stream(const Config& conf)
 		: emb::interrupt_invoker<Stream<Instance>>(this)
 	{
 		if constexpr (Instance == Peripheral::DMA1_STREAM0) { m_handle.Instance = DMA1_Stream0; }
@@ -170,7 +170,7 @@ public:
 
 		enableClock(Instance);
 
-		m_handle.Init = cfg.init;
+		m_handle.Init = conf.init;
 		if (HAL_DMA_DeInit(&m_handle) != HAL_OK)
 		{
 			fatal_error("DMA stream deinitialization failed");
@@ -230,11 +230,20 @@ public:
 template <typename T, uint32_t Size>
 struct Buffer
 {
-	T data[Size] __attribute__((aligned(32)));
-	static constexpr uint32_t size = Size; 
+private:
+	T m_data[Size] __attribute__((aligned(32)));
+public:
+	T* data() { return m_data; }
+	constexpr const T* data() const { return m_data; }
+
+	constexpr uint32_t size() const { return Size; }
+
+	T& operator[](size_t pos) { return m_data[pos]; }
+	constexpr T& operator[](size_t pos) const { return m_data[pos]; }
+
 	void invalidateDCache(size_t offset_, size_t size_)
 	{
-		SCB_InvalidateDCache_by_Addr(reinterpret_cast<uint32_t*>(&data[offset_]), size_ * sizeof(T));
+		SCB_InvalidateDCache_by_Addr(reinterpret_cast<uint32_t*>(&m_data[offset_]), size_ * sizeof(T));
 	}
 };
 

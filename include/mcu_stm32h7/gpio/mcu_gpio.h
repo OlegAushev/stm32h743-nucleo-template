@@ -81,20 +81,20 @@ public:
 	/**
 	 * @brief Initializes GPIO pin.
 	 * 
-	 * @param cfg pin config
+	 * @param conf pin config
 	 * @return (none)
 	 */
-	void init(const Config& cfg)
+	void init(const Config& conf)
 	{
 		// enable port clock
-		auto portIndex = std::distance(gpioPorts.begin(), std::find(gpioPorts.begin(), gpioPorts.end(), cfg.port));
+		auto portIndex = std::distance(gpioPorts.begin(), std::find(gpioPorts.begin(), gpioPorts.end(), conf.port));
 		if (!m_isClockEnabled[portIndex])
 		{
 			gpioClkEnableFuncs[portIndex]();
 			m_isClockEnabled[portIndex] = true;
 		}	
 
-		m_cfg = cfg;
+		m_cfg = conf;
 		HAL_GPIO_Init(m_cfg.port, &m_cfg.pin);
 		m_initialized = true;
 	}
@@ -175,11 +175,11 @@ public:
 
 	/**
 	 * @brief Constructs GPIO input pin.
-	 * @param cfg pin config
+	 * @param conf pin config
 	 */
-	Input(const Config& cfg)
+	Input(const Config& conf)
 	{
-		init(cfg);
+		init(conf);
 	}
 
 	/**
@@ -299,11 +299,11 @@ public:
 
 	/**
 	 * @brief Constructs GPIO output pin.
-	 * @param cfg pin config
+	 * @param conf pin config
 	 */
-	Output(const Config& cfg)
+	Output(const Config& conf)
 	{
-		init(cfg);
+		init(conf);
 	}
 
 	/**

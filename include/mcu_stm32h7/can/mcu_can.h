@@ -145,34 +145,34 @@ public:
 	/**
 	 * @brief Construct a new Module object
 	 * 
-	 * @param rxPinCfg 
-	 * @param txPinCfg 
-	 * @param cfg 
+	 * @param rxPinConf 
+	 * @param txPinConf 
+	 * @param conf 
 	 * @param rxFilters 
 	 */
-	Module(const RxPinConfig& rxPinCfg, const TxPinConfig& txPinCfg, const Config& cfg,
+	Module(const RxPinConfig& rxPinConf, const TxPinConfig& txPinConf, const Config& conf,
 		const std::vector<FDCAN_FilterTypeDef>& rxFilters)
 		: emb::interrupt_invoker<Module<Instance>>(this)
 	{
 		m_rxPin.init({
-			.port = rxPinCfg.port,
+			.port = rxPinConf.port,
 			.pin = {
-				.Pin = rxPinCfg.pin,
+				.Pin = rxPinConf.pin,
 				.Mode = GPIO_MODE_AF_PP,
 				.Pull = GPIO_PULLUP,
 				.Speed = GPIO_SPEED_FREQ_HIGH,
-				.Alternate = rxPinCfg.afSelection
+				.Alternate = rxPinConf.afSelection
 			},
 			.activeState = emb::PinActiveState::HIGH});
 
 		m_txPin.init({
-			.port = txPinCfg.port,
+			.port = txPinConf.port,
 			.pin = {
-				.Pin = txPinCfg.pin,
+				.Pin = txPinConf.pin,
 				.Mode = GPIO_MODE_AF_PP,
 				.Pull = GPIO_PULLUP,
 				.Speed = GPIO_SPEED_FREQ_HIGH,
-				.Alternate = txPinCfg.afSelection
+				.Alternate = txPinConf.afSelection
 			},
 			.activeState = emb::PinActiveState::HIGH});
 
@@ -183,7 +183,7 @@ public:
 		
 		enableClock();
 
-		m_handle.Init = cfg.init;
+		m_handle.Init = conf.init;
 		m_handle.Init.StdFiltersNbr = rxFilters.size();	// by default - 0
 		if (HAL_FDCAN_Init(&m_handle) != HAL_OK)
 		{

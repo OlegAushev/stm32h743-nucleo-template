@@ -32,11 +32,13 @@
 #include "cli/cli_server.h"
 #include "cli/shell/cli_shell.h"
 
+#include "helpers/callbacks_adc/callbacks_adc.h"
+
 #include "build/generated/git_version.h"
 #include "tests/tests.h"
 
 
-mcu::dma::Buffer<uint16_t, 32> adc3DmaBuffer __attribute__((section(".dma_buf_section")));
+
 mcu::SystemClock::TaskStatus taskLedHeartbeat();
 mcu::SystemClock::TaskStatus taskAcqMcuSysInfo();
 
@@ -189,9 +191,9 @@ int main()
 
 	mcu::adc::Module<mcu::adc::Peripheral::ADC_3> adc3(sysconfig::adc3::config);
 	mcu::dma::Stream<mcu::dma::Peripheral::DMA1_STREAM1> dma1Stream1(sysconfig::adc3::dma::config);
-	adc3.onHalfCompleted = [](){};
-	adc3.onCompleted = [](){};
-	adc3.onError = [](){};	
+	adc3.onHalfCompleted = onAdc3DmaHalfCompleted;
+	adc3.onCompleted = onAdc3DmaCompleted;
+	adc3.onError = onAdc3DmaError;	
 	adc3.linkDma(dma1Stream1);
 	dma1Stream1.initInterrupts(adc3.handle().DMA_Handle ,mcu::InterruptPriority(1));
 	dma1Stream1.enableInterrupts();

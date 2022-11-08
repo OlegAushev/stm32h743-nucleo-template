@@ -114,9 +114,9 @@ public:
 	/**
 	 * @brief Construct a new Module object
 	 * 
-	 * @param cfg 
+	 * @param conf 
 	 */
-	Module(const Config& cfg)
+	Module(const Config& conf)
 		: emb::interrupt_invoker<Module<Instance>>(this)
 	{
 		if constexpr (Instance == Peripheral::ADC_1) { m_handle.Instance = ADC1; }
@@ -126,7 +126,7 @@ public:
 
 		enableClock(Instance);
 
-		m_handle.Init = cfg.init;
+		m_handle.Init = conf.init;
 		if (HAL_ADC_Init(&m_handle) != HAL_OK)
 		{
 			fatal_error("ADC module initialization failed");
@@ -165,15 +165,15 @@ public:
 	/**
 	 * @brief 
 	 * 
-	 * @param pinCfg 
+	 * @param pinConf 
 	 * @param channelCfg 
 	 */
-	void addRegularChannel(PinConfig pinCfg, ADC_ChannelConfTypeDef channelCfg)
+	void addRegularChannel(PinConfig pinConf, ADC_ChannelConfTypeDef channelCfg)
 	{
 		mcu::gpio::Input input({
-			.port = pinCfg.port,
+			.port = pinConf.port,
 			.pin = {
-				.Pin = pinCfg.pin,
+				.Pin = pinConf.pin,
 				.Mode = GPIO_MODE_ANALOG,
 				.Pull = GPIO_NOPULL}});
 
@@ -218,7 +218,7 @@ public:
 	template <uint32_t DmaBufSize>
 	HalStatus startRegularConversionWithDma(mcu::dma::Buffer<uint16_t, DmaBufSize>& buf)
 	{
-		HalStatus status = HAL_ADC_Start_DMA(&m_handle, reinterpret_cast<uint32_t*>(buf.data), buf.size);
+		HalStatus status = HAL_ADC_Start_DMA(&m_handle, reinterpret_cast<uint32_t*>(buf.data()), buf.size());
 		if constexpr (STRICT_ERROR_CONTROL)
 		{
 			if (status != HAL_OK)

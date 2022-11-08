@@ -98,32 +98,32 @@ public:
 	/**
 	 * @brief Construct a new Module object
 	 * 
-	 * @param rxPinCfg 
-	 * @param txPinCfg 
-	 * @param cfg 
+	 * @param rxPinConf 
+	 * @param txPinConf 
+	 * @param conf 
 	 */
-	Module(const RxPinConfig& rxPinCfg, const TxPinConfig& txPinCfg, const Config& cfg)
+	Module(const RxPinConfig& rxPinConf, const TxPinConfig& txPinConf, const Config& conf)
 		: emb::interrupt_invoker<Module<Instance>>(this)
 	{
 		m_rxPin.init({
-			.port = rxPinCfg.port, 
+			.port = rxPinConf.port, 
 			.pin = {
-				.Pin = rxPinCfg.pin,
+				.Pin = rxPinConf.pin,
 				.Mode = GPIO_MODE_AF_PP,
 				.Pull = GPIO_PULLUP,
 				.Speed = GPIO_SPEED_FREQ_HIGH,
-				.Alternate = rxPinCfg.afSelection
+				.Alternate = rxPinConf.afSelection
 			},
 			.activeState = emb::PinActiveState::HIGH});
 				
 		m_txPin.init({
-			.port = txPinCfg.port,
+			.port = txPinConf.port,
 			.pin = {
-				.Pin = txPinCfg.pin,
+				.Pin = txPinConf.pin,
 				.Mode = GPIO_MODE_AF_PP,
 				.Pull = GPIO_PULLUP,
 				.Speed = GPIO_SPEED_FREQ_HIGH,
-				.Alternate = txPinCfg.afSelection
+				.Alternate = txPinConf.afSelection
 			},
 			.activeState = emb::PinActiveState::HIGH});
 
@@ -137,8 +137,8 @@ public:
 		else if constexpr (Instance == Peripheral::UART_8)	{ __HAL_RCC_UART8_CLK_ENABLE(); m_handle.Instance = UART8; }
 		else { []<bool flag=false>(){ static_assert(flag); }(); }
 
-		m_handle.Init = cfg.init;
-		m_handle.AdvancedInit = cfg.advanced;
+		m_handle.Init = conf.init;
+		m_handle.AdvancedInit = conf.advanced;
 		if (HAL_UART_Init(&m_handle) != HAL_OK)
 		{
 			fatal_error("UART module initialization failed");
