@@ -41,7 +41,7 @@ void initDeviceClock()
 
 	/** Configure the main internal regulator output voltage
 	 */
-	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);	// see Table 17 and 59 of reference manual
 
 	while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
 
@@ -81,7 +81,7 @@ void initDeviceClock()
 	RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV2;
 	RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
 	RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;
-	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)	// see Table 17 of reference manual
 	{
 		fatal_error("");
 	}
@@ -93,8 +93,8 @@ void initDeviceClock()
 	 */
 	PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_ADC;
 	PeriphClkInitStruct.PLL2.PLL2M = 4;
-	PeriphClkInitStruct.PLL2.PLL2N = 100;
-	PeriphClkInitStruct.PLL2.PLL2P = 2;
+	PeriphClkInitStruct.PLL2.PLL2N = 128;
+	PeriphClkInitStruct.PLL2.PLL2P = 4;
 	PeriphClkInitStruct.PLL2.PLL2Q = 4;
 	PeriphClkInitStruct.PLL2.PLL2R = 2;
 	PeriphClkInitStruct.PLL2.PLL2RGE = RCC_PLL2VCIRANGE_1;

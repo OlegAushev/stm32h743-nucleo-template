@@ -123,19 +123,13 @@ inline void disableDCache() { SCB_DisableDCache(); }
  * @brief 
  * 
  * @tparam AdcResolution 
- * @param adcData 
+ * @param adcData left-aligned 16-bit ADC result
  * @return float 
  */
-template <uint32_t AdcResolution>
-float calculateMcuTemperature(uint32_t adcData)
+inline float calculateMcuTemperature(uint32_t adcData)
 {
-	if constexpr (AdcResolution == ADC_RESOLUTION_16B)
-	{
-		return float(int32_t(adcData) - int32_t(*TEMPSENSOR_CAL1_ADDR)) * (float(TEMPSENSOR_CAL2_TEMP) - float(TEMPSENSOR_CAL1_TEMP))
-				/ (int32_t(*TEMPSENSOR_CAL2_ADDR) - int32_t(*TEMPSENSOR_CAL1_ADDR)) + float(TEMPSENSOR_CAL1_TEMP); 
-	}
-	else static_assert(AdcResolution == ADC_RESOLUTION_16B);
-	return 0;
+	return float(int32_t(adcData) - int32_t(*TEMPSENSOR_CAL1_ADDR)) * (float(TEMPSENSOR_CAL2_TEMP) - float(TEMPSENSOR_CAL1_TEMP))
+			/ (int32_t(*TEMPSENSOR_CAL2_ADDR) - int32_t(*TEMPSENSOR_CAL1_ADDR)) + float(TEMPSENSOR_CAL1_TEMP); 
 }
 
 
@@ -143,18 +137,12 @@ float calculateMcuTemperature(uint32_t adcData)
  * @brief 
  * 
  * @tparam AdcResolution 
- * @param adcData 
+ * @param adcData left-aligned 16-bit ADC result
  * @return float 
  */
-template <uint32_t AdcResolution>
-float calculateMcuVref(uint32_t adcData)
+inline float calculateMcuVref(uint32_t adcData)
 {
-	if constexpr (AdcResolution == ADC_RESOLUTION_16B)
-	{
-		return 3.3f * float(*VREFINT_CAL_ADDR) / float(adcData);
-	}
-	else static_assert(AdcResolution == ADC_RESOLUTION_16B);
-	return 0;
+	return 3.3f * float(*VREFINT_CAL_ADDR) / float(adcData);
 }
 
 

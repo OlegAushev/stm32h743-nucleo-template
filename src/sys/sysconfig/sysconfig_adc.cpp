@@ -19,12 +19,12 @@
 /* ADC3 */
 const mcu::adc::Config sysconfig::adc3::config = {
 	.init = {
-		.ClockPrescaler =		ADC_CLOCK_ASYNC_DIV16,	
-		.Resolution =			ADC_RESOLUTION_16B,
+		.ClockPrescaler =		ADC_CLOCK_ASYNC_DIV4,		// PLL2P = 64MHz	
+		.Resolution =			ADC_RESOLUTION_12B,
 		.ScanConvMode =			ADC_SCAN_ENABLE,
 		.EOCSelection =			ADC_EOC_SEQ_CONV,
 		.LowPowerAutoWait =		DISABLE,
-		.ContinuousConvMode =		ENABLE,				
+		.ContinuousConvMode =		DISABLE,				
 		.NbrOfConversion =		2,			
 		.DiscontinuousConvMode =	DISABLE,
 		.NbrOfDiscConversion =		1,				// discarded
@@ -32,7 +32,7 @@ const mcu::adc::Config sysconfig::adc3::config = {
 		.ExternalTrigConvEdge =		ADC_EXTERNALTRIGCONVEDGE_NONE,	// discarded
 		.ConversionDataManagement =	ADC_CONVERSIONDATA_DMA_CIRCULAR,
 		.Overrun =			ADC_OVR_DATA_OVERWRITTEN,
-		.LeftBitShift =			ADC_LEFTBITSHIFT_NONE,
+		.LeftBitShift =			ADC_LEFTBITSHIFT_4,
 		.OversamplingMode =		DISABLE
 	}
 };
@@ -64,7 +64,7 @@ const ADC_ChannelConfTypeDef sysconfig::adc3::channels::internalTemp = {
 const ADC_ChannelConfTypeDef sysconfig::adc3::channels::internalVref = {
 	.Channel =			ADC_CHANNEL_VREFINT,		/* Sampled channel number */
 	.Rank =				ADC_REGULAR_RANK_2,		/* Rank of sampled channel number ADCx_CHANNEL */
-	.SamplingTime =			ADC_SAMPLETIME_810CYCLES_5,	/* Sampling time (number of clock cycles unit) */
+	.SamplingTime =			ADC_SAMPLETIME_16CYCLES_5,	/* Sampling time (number of clock cycles unit) */
 	.SingleDiff =			ADC_SINGLE_ENDED,		/* Single input channel */
 	.OffsetNumber =			ADC_OFFSET_NONE,		/* No offset subtraction */ 
 	.Offset =			0,				/* Parameter discarded because offset correction is disabled */

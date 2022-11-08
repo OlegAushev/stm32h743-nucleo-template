@@ -195,13 +195,12 @@ int main()
 	adc3.onCompleted = onAdc3DmaCompleted;
 	adc3.onError = onAdc3DmaError;	
 	adc3.linkDma(dma1Stream1);
-	dma1Stream1.initInterrupts(adc3.handle().DMA_Handle ,mcu::InterruptPriority(1));
+	dma1Stream1.initInterrupts(adc3.handle().DMA_Handle ,mcu::InterruptPriority(4));
 	dma1Stream1.enableInterrupts();
 
 	adc3.addInternalChannel(sysconfig::adc3::channels::internalTemp);
 	adc3.addInternalChannel(sysconfig::adc3::channels::internalVref);
 	adc3.calibrate();
-	//adc3.startRegularConversion();
 	adc3.startRegularConversionWithDma(adc3DmaBuffer);
 
 	cli::print_blocking("done");
@@ -223,8 +222,8 @@ int main()
 	mcu::SystemClock::registerTask(0, taskLedHeartbeat);
 	mcu::SystemClock::setTaskPeriod(0, 2000);
 
-	//mcu::SystemClock::registerTask(1, taskAcqMcuSysInfo);
-	//mcu::SystemClock::setTaskPeriod(1, 1000);
+	mcu::SystemClock::registerTask(1, taskAcqMcuSysInfo);
+	mcu::SystemClock::setTaskPeriod(1, 10);
 
 	cli::print_blocking("done");
 
@@ -302,13 +301,9 @@ mcu::SystemClock::TaskStatus taskLedHeartbeat()
 
 mcu::SystemClock::TaskStatus taskAcqMcuSysInfo()
 {
-	using namespace mcu::adc; 
-
-	if (Module<Peripheral::ADC_3>::instance().pollForConversion() == mcu::HalStatus::HAL_OK)
-	{
-		Sysinfo::saveMcuTemperature(mcu::calculateMcuTemperature<ADC_RESOLUTION_16B>(Module<Peripheral::ADC_3>::instance().readRegularConversion()));
-		Module<Peripheral::ADC_3>::instance().startRegularConversion();
-	}
+	using namespace mcu::adc;
+	mcu::gpio::DurationLogger<mcu::gpio::DurationLoggerMode::SET_RESET> dl(GPIOC, GPIO_PIN_10);
+	Module<Peripheral::ADC_3>::instance().startRegularConversion();
 	return mcu::SystemClock::TaskStatus::SUCCESS;
 }
 
