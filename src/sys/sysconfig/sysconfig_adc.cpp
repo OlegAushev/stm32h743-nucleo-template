@@ -20,20 +20,20 @@
 const mcu::adc::Config sysconfig::adc3::config = {
 	.init = {
 		.ClockPrescaler =		ADC_CLOCK_ASYNC_DIV16,	
-		.Resolution =			ADC_RESOLUTION_16B,		/* 16-bit resolution for converted data */
-		.ScanConvMode =			DISABLE,			/* Sequencer disabled (ADC conversion on only 1 channel: channel set on rank 1) */
-		.EOCSelection =			ADC_EOC_SINGLE_CONV,		/* EOC flag picked-up to indicate conversion end */
-		.LowPowerAutoWait =		DISABLE,			/* Auto-delayed conversion feature disabled */
-		.ContinuousConvMode =		ENABLE,				/* Continuous mode disabled (automatic conversion restart after each conversion) */
-		.NbrOfConversion =		1,				/* Parameter discarded because sequencer is disabled */
-		.DiscontinuousConvMode =	DISABLE,			/* Parameter discarded because sequencer is disabled */
-		.NbrOfDiscConversion =		1,				/* Parameter discarded because sequencer is disabled */
-		.ExternalTrigConv =		ADC_SOFTWARE_START,		/* Software start to trig the 1st conversion manually, without external event */
-		.ExternalTrigConvEdge =		ADC_EXTERNALTRIGCONVEDGE_NONE,	/* Parameter discarded because software trigger chosen */
-		.ConversionDataManagement =	ADC_CONVERSIONDATA_DMA_CIRCULAR,/* DR register used as output (DMA mode disabled) */
-		.Overrun =			ADC_OVR_DATA_OVERWRITTEN,	/* DR register is overwritten with the last conversion result in case of overrun */
-		.LeftBitShift =			ADC_LEFTBITSHIFT_NONE,		/* Left shift of final results */
-		.OversamplingMode =		DISABLE				/* Oversampling disable */
+		.Resolution =			ADC_RESOLUTION_16B,
+		.ScanConvMode =			ADC_SCAN_ENABLE,
+		.EOCSelection =			ADC_EOC_SEQ_CONV,
+		.LowPowerAutoWait =		DISABLE,
+		.ContinuousConvMode =		ENABLE,				
+		.NbrOfConversion =		2,			
+		.DiscontinuousConvMode =	DISABLE,
+		.NbrOfDiscConversion =		1,				// discarded
+		.ExternalTrigConv =		ADC_SOFTWARE_START,
+		.ExternalTrigConvEdge =		ADC_EXTERNALTRIGCONVEDGE_NONE,	// discarded
+		.ConversionDataManagement =	ADC_CONVERSIONDATA_DMA_CIRCULAR,
+		.Overrun =			ADC_OVR_DATA_OVERWRITTEN,
+		.LeftBitShift =			ADC_LEFTBITSHIFT_NONE,
+		.OversamplingMode =		DISABLE
 	}
 };
 

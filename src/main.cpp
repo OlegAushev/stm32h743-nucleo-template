@@ -197,7 +197,7 @@ int main()
 	dma1Stream1.enableInterrupts();
 
 	adc3.addInternalChannel(sysconfig::adc3::channels::internalTemp);
-	// TODO adc3.addInternalChannel(settings.adcChannels.internalVrefChannelConfig);
+	adc3.addInternalChannel(sysconfig::adc3::channels::internalVref);
 	adc3.calibrate();
 	//adc3.startRegularConversion();
 	adc3.startRegularConversionWithDma(adc3DmaBuffer);
