@@ -262,9 +262,9 @@ public:
 
 	/* INTERRUPTS */
 public:
-	static inline std::function<void()> onDmaHalfDone = [](){ emb::fatal_error("uninitialized callback"); };
-	static inline std::function<void()> onDmaDone = [](){ emb::fatal_error("uninitialized callback"); };
-	static inline std::function<void()> onDmaError = [](){ emb::fatal_error("uninitialized callback"); };
+	static inline std::function<void()> onHalfCompleted = [](){ emb::fatal_error("uninitialized callback"); };
+	static inline std::function<void()> onCompleted = [](){ emb::fatal_error("uninitialized callback"); };
+	static inline std::function<void()> onError = [](){ emb::fatal_error("uninitialized callback"); };
 };
 
 

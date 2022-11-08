@@ -19,15 +19,15 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* handle)
 	using namespace mcu::adc;
 	if (handle->Instance == ADC1)
 	{
-		Module<Peripheral::ADC_1>::instance().onDmaHalfDone();
+		Module<Peripheral::ADC_1>::instance().onHalfCompleted();
 	}
 	else if (handle->Instance == ADC2)
 	{
-		Module<Peripheral::ADC_2>::instance().onDmaHalfDone();
+		Module<Peripheral::ADC_2>::instance().onHalfCompleted();
 	}
 	else if (handle->Instance == ADC3)
 	{
-		Module<Peripheral::ADC_3>::instance().onDmaHalfDone();
+		Module<Peripheral::ADC_3>::instance().onHalfCompleted();
 	}
 }
 
@@ -37,15 +37,15 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* handle)
 	using namespace mcu::adc;
 	if (handle->Instance == ADC1)
 	{
-		Module<Peripheral::ADC_1>::instance().onDmaDone();
+		Module<Peripheral::ADC_1>::instance().onCompleted();
 	}
 	else if (handle->Instance == ADC2)
 	{
-		Module<Peripheral::ADC_2>::instance().onDmaDone();
+		Module<Peripheral::ADC_2>::instance().onCompleted();
 	}
 	else if (handle->Instance == ADC3)
 	{
-		Module<Peripheral::ADC_3>::instance().onDmaDone();
+		Module<Peripheral::ADC_3>::instance().onCompleted();
 	}
 }
 
@@ -55,14 +55,14 @@ void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *handle)
 	using namespace mcu::adc;
 	if (handle->Instance == ADC1)
 	{
-		Module<Peripheral::ADC_1>::instance().onDmaError();
+		Module<Peripheral::ADC_1>::instance().onError();
 	}
 	else if (handle->Instance == ADC2)
 	{
-		Module<Peripheral::ADC_2>::instance().onDmaError();
+		Module<Peripheral::ADC_2>::instance().onError();
 	}
 	else if (handle->Instance == ADC3)
 	{
-		Module<Peripheral::ADC_3>::instance().onDmaError();
+		Module<Peripheral::ADC_3>::instance().onError();
 	}
 }

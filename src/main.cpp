@@ -189,9 +189,9 @@ int main()
 
 	mcu::adc::Module<mcu::adc::Peripheral::ADC_3> adc3(sysconfig::adc3::config);
 	mcu::dma::Stream<mcu::dma::Peripheral::DMA1_STREAM1> dma1Stream1(sysconfig::adc3::dma::config);
-	adc3.onDmaHalfDone = [](){};
-	adc3.onDmaDone = [](){};
-	adc3.onDmaError = [](){};	
+	adc3.onHalfCompleted = [](){};
+	adc3.onCompleted = [](){};
+	adc3.onError = [](){};	
 	adc3.linkDma(dma1Stream1);
 	dma1Stream1.initInterrupts(adc3.handle().DMA_Handle ,mcu::InterruptPriority(1));
 	dma1Stream1.enableInterrupts();
